@@ -201,5 +201,44 @@
 	<!-- Start of bodyEnd -->
     
     <!-- End of bodyEnd -->
+	<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    // 1. Ищем кнопку на сайте по тексту «Подтверждение»
+    const buttons = Array.from(document.querySelectorAll('button, div, span, a'));
+    const submitButton = buttons.find(el => el.textContent.trim() === 'Подтверждение');
+    
+    // 2. Ищем поле, куда пользователь вводит email
+    const emailInput = document.querySelector('input[type="email"]') || document.querySelector('input[placeholder*="email" i]');
+
+    if (submitButton && emailInput) {
+      // 3. Перехватываем клик по кнопке
+      submitButton.addEventListener('click', function(e) {
+        e.preventDefault(); // Останавливаем стандартную сломанную отправку Framer
+        
+        const emailValue = emailInput.value;
+        if (!emailValue) {
+          alert('Пожалуйста, введите ваш email');
+          return;
+        }
+
+        // 4. Отправляем email на ваш бесплатный сервис (например, Sheet Monkey или Web3Forms)
+        fetch('ВСТАВЬТЕ_СЮДА_ВАШУ_ССЫЛКУ_ОТ_SHEET_MONKEY_ИЛИ_WEB3FORMS', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({ 'email': emailValue })
+        })
+        .then(response => {
+          if (response.ok) {
+            alert('Успешно отправлено!'); // Текст, который увидит клиент после подписки
+            emailInput.value = ''; // Очищаем строку ввода
+          } else {
+            alert('Ошибка отправки. Попробуйте позже.');
+          }
+        })
+        .catch(error => console.error('Ошибка:', error));
+      });
+    }
+  });
+</script>
 </body>
 </html>
