@@ -206,7 +206,7 @@
     setTimeout(function() {
       // 1. Находим элементы на экране
       const allElements = Array.from(document.querySelectorAll('div, p, span, button, a'));
-      const myButton = allElements.find(el => el.textContent.trim() === 'Подтверждение');
+      const myButton = allElements.find(el => el.textContent.trim() === 'Sign Up for Test');
       
       // Ищем поле ввода (где написано email или рядом с кнопкой)
       const myInput = document.querySelector('input') || allElements.find(el => el.textContent.toLowerCase().includes('email'));
