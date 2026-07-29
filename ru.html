@@ -249,7 +249,7 @@
         });
       }
 		// Находим кнопку обратной связи по её тексту Share Your Thoughts
-const contactBtn = allElements.find(el => el.textContent.trim() === 'Share Your Thoughts');
+const contactBtn = allElements.find(el => el.textContent.trim() === 'Напишите ваши пожелания');
 if (contactBtn) {
   contactBtn.style.cursor = 'pointer';
   contactBtn.addEventListener('click', function(e) {
@@ -262,7 +262,7 @@ if (contactBtn) {
     if (!userMessage || userMessage.trim() === '') return; 
 
     // Отправляем отзыв в ту же самую форму Sheet Monkey
-    fetch('ВСТАВЬТЕ_СЮДА_ВАШУ_ССЫЛКУ_ОТ_SHEET_MONKEY', {
+    fetch('https://api.sheetmonkey.io/form/rpG6jchG1WrwygjTHnjXhq', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({ 'message': userMessage.trim() })
