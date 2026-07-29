@@ -176,5 +176,80 @@
 	<!-- Start of bodyEnd -->
     
     <!-- End of bodyEnd -->
+	<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    setTimeout(function() {
+      // 1. Находим элементы на экране
+      const allElements = Array.from(document.querySelectorAll('div, p, span, button, a'));
+      const myButton = allElements.find(el => el.textContent.trim() === 'Подтверждение');
+      
+      // Ищем поле ввода (где написано email или рядом с кнопкой)
+      const myInput = document.querySelector('input') || allElements.find(el => el.textContent.toLowerCase().includes('email'));
+
+      if (myButton && myInput) {
+        // Получаем точные координаты кнопки на экране смартфона/компьютера
+        const btnRect = myButton.getBoundingClientRect();
+        const inputRect = myInput.getBoundingClientRect();
+
+        // 2. Создаем НАСТОЯЩУЮ невидимую кнопку и невидимое поле ввода прямо поверх дизайна!
+        const fakeForm = document.createElement('div');
+        fakeForm.style.cssText = `
+          position: absolute;
+          top: ${window.scrollY + inputRect.top}px;
+          left: ${inputRect.left}px;
+          width: ${inputRect.width}px;
+          height: ${inputRect.height + (btnRect.bottom - inputRect.bottom)}px;
+          z-index: 999999;
+          display: flex;
+          flex-direction: column;
+          background: transparent;
+        `;
+
+        fakeForm.innerHTML = `
+          <input type="email" id="real-hidden-email" style="width: 100%; height: ${inputRect.height}px; opacity: 0; cursor: text;" placeholder="email">
+          <div id="real-hidden-btn" style="width: ${btnRect.width}px; height: ${btnRect.height}px; margin-top: ${btnRect.top - inputRect.bottom}px; margin-left: ${btnRect.left - inputRect.left}px; opacity: 0; cursor: pointer;"></div>
+        `;
+
+        document.body.appendChild(fakeForm);
+
+        // При клике на невидимую зону поля — переводим фокус на него
+        const hiddenInput = document.getElementById('real-hidden-email');
+        hiddenInput.addEventListener('input', function() {
+          // Дублируем текст в ваш красивый дизайн, чтобы пользователь видел, что он пишет!
+          myInput.textContent = this.value;
+          if(myInput.value !== undefined) myInput.value = this.value;
+        });
+
+        // 3. Перехватываем клик по нашей невидимой кнопке-накладке
+        document.getElementById('real-hidden-btn').addEventListener('click', function() {
+          const emailValue = hiddenInput.value.trim();
+
+          if (!emailValue || !emailValue.includes('@')) {
+            alert('Пожалуйста, введите корректный email');
+            return;
+          }
+
+          // 4. Прямая отправка в Sheet Monkey
+          fetch('https://api.sheetmonkey.io/form/rpG6jchG1WrwygjTHnjXhq', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({ 'email': emailValue })
+          })
+          .then(response => {
+            if (response.ok) {
+              alert('Спасибо за подписку! Ожидайте поступления тестовой версии приложения на вашу почту в ближайшее время.');
+              hiddenInput.value = '';
+              myInput.textContent = '';
+              if(myInput.value !== undefined) myInput.value = '';
+            } else {
+              alert('Ошибка Sheet Monkey');
+            }
+          })
+          .catch(err => alert('Ошибка сети'));
+        });
+      }
+    }, 1500); // Ждем полторы секунды для полной загрузки сайта
+  });
+</script>
 </body>
 </html>
