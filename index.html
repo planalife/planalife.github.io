@@ -273,6 +273,35 @@
           .catch(err => alert('Ошибка сети'));
         });
       }
+		// Находим кнопку обратной связи по её тексту Share Your Thoughts
+const contactBtn = allElements.find(el => el.textContent.trim() === 'Share Your Thoughts');
+if (contactBtn) {
+  contactBtn.style.cursor = 'pointer';
+  contactBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    
+    // Всплывающее окно для ввода отзыва на английском
+    const userMessage = prompt('Please share your thoughts, ideas, or feedback about PlanaLife app:');
+    
+    // Если пользователь нажал Отмену или ничего не написал — выходим
+    if (!userMessage || userMessage.trim() === '') return; 
+
+    // Отправляем отзыв в ту же самую форму Sheet Monkey
+    fetch('https://api.sheetmonkey.io/form/rpG6jchG1WrwygjTHnjXhq', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ 'message': userMessage.trim() })
+    })
+    .then(response => {
+      if (response.ok) {
+        alert('Thank you! Your feedback has been successfully sent to the developers.');
+      } else {
+        alert('Error sending feedback. Please try again.');
+      }
+    })
+    .catch(err => alert('Network error. Please try again later.'));
+  });
+}
     }, 1500); // Ждем полторы секунды для полной загрузки сайта
   });
 </script>
