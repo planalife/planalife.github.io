@@ -1,0 +1,19 @@
+{
+  "app_video": {
+    "youtubeId": "ВАШ_ID_ВИДЕО_С_YOUTUBE"
+  },
+  "google_play": {
+    "is_released": false,
+    "store_url": "https://google.com"
+  },
+  "app_store": {
+    "is_released": false,
+    "store_url": "https://apple.com"
+  },
+  "beta_testing": {
+    "google_script_url": "https://google.com"
+  },
+  "feedback_form": {
+    "url": "https://tally.so"
+  }
+}
