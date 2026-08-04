@@ -320,21 +320,43 @@ a[href*="framercommerce.com"] {
     
     <!-- End of bodyEnd -->
 
-<!-- МЕНЮ ПЕРЕВОДА GOOGLE -->
+<!-- 1. СТИЛИ И ВНЕШНИЙ ВИД КНОПКИ С ГЛОБУСОМ -->
 <style>
-  #google_translate_element { position: fixed; top: 20px; right: 20px; z-index: 999999; }
-  #google_translate_element select { padding: 8px 12px !important; border-radius: 20px !important; border: 1px solid rgba(0,0,0,0.15) !important; background: #ffffff !important; color: #000000 !important; font-size: 14px !important; font-weight: 500 !important; cursor: pointer !important; box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important; outline: none !important; }
-  .goog-logo-link, .goog-te-gadget span, .goog-te-banner-frame { display: none !important; }
-  .goog-te-gadget { color: transparent !important; font-size: 0 !important; }
+  /* Кнопка в углу экрана */
+  #custom-lang-btn {
+    position: fixed; top: 20px; right: 20px; z-index: 999999;
+    padding: 10px 16px; border-radius: 24px; background: #ffffff; color: #000000;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 14px; font-weight: 600;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12); cursor: pointer; border: 1px solid rgba(0,0,0,0.08);
+  }
+  /* Выплывающее окошко со списком языков */
+  #custom-lang-dropdown {
+    display: none; position: fixed; top: 70px; right: 20px; z-index: 999999;
+    background: #ffffff; border-radius: 12px; padding: 8px; width: 160px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15); border: 1px solid rgba(0,0,0,0.08);
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  #custom-lang-dropdown button {
+    width: 100%; padding: 10px; border: none; background: none; text-align: left;
+    font-size: 14px; font-weight: 500; cursor: pointer; border-radius: 6px; color: #000;
+  }
+  #custom-lang-dropdown button:hover { background: #f5f5f7; }
+  /* Полностью уничтожаем уродливые стандартные панели Google */
+  #google_translate_element, .goog-te-banner-frame, .goog-te-gadget, .skiptranslate, iframe.goog-te-menu-frame { display: none !important; visibility: hidden !important; }
   body { top: 0 !important; position: static !important; }
 </style>
-<div id="google_translate_element"></div>
-<script type="text/javascript">
-function googleTranslateElementInit() {
-  new google.translate.TranslateElement({pageLanguage: 'en', includedLanguages: 'en,ru,es,de,fr', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
-}
-</script>
-<script type="text/javascript" src="//://google.com"></script>
+
+<!-- ВИЗУАЛЬНЫЕ ЭЛЕМЕНТЫ КНОПКИ И МЕНЮ -->
+<div id="custom-lang-btn" onclick="toggleLangMenu()">Language 🌐</div>
+
+<div id="custom-lang-dropdown">
+  <!-- Наш список: для Русского будет переход, для остальных — автоперевод -->
+  <button onclick="selectLangAction('ru', 'https://planalife.app/ru')">Русский 🇷🇺</button>
+  <button onclick="selectLangAction('es', '')">Español 🇪🇸</button>
+  <button onclick="selectLangAction('de', '')">Deutsch 🇩🇪</button>
+</div>
+
+<div id="google_translate_element" style="display:none;"></div>
 
 
 </body></html>
