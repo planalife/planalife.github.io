@@ -396,68 +396,129 @@ function selectLangAction(langCode, manualUrl) {
 }
 </script>
 //////////////
-<!-- КРАСИВЫЕ И КОНТРАСТНЫЕ СТИЛИ ДЛЯ ФОРМЫ (Чтобы всё было четко видно) -->
+<!-- ======================================================== -->
+<!-- НАЧАЛО ЦЕЛЬНОГО БЛОКА ДЛЯ БЕТА-ТЕСТА И ОБРАТНОЙ СВЯЗИ -->
+
+<!-- СТИЛИ ДЛЯ АВТОНОМНЫХ ОКЕН (Чтобы всё было ровно, красиво и контрастно) -->
 <style>
-  .custom-beta-box input {
-    width: 100% !important; padding: 12px !important; 
-    border: 2px solid #000000 !important; border-radius: 8px !important; 
-    margin-bottom: 15px !important; box-sizing: border-box !important;
-    background: #ffffff !important; color: #000000 !important; /* Белый фон, черный текст */
-    font-size: 16px !important;
+  /* Общие стили для черных фонов-оверлеев */
+  #custom-beta-overlay, #custom-feedback-overlay {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); z-index: 9999999;
+    align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease;
   }
-  .custom-beta-box button {
-    width: 100% !important; padding: 12px !important; 
-    background: #000000 !important; color: #ffffff !important; 
-    border: none !important; border-radius: 8px !important; 
-    font-weight: bold !important; cursor: pointer !important;
+  /* Белая контрастная плашка по центру */
+  .custom-popup-box {
+    background: #ffffff !important; color: #000000 !important;
+    padding: 30px; border-radius: 16px; width: 420px; max-width: 90%;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3); text-align: center;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif; position: relative;
+    box-sizing: border-box;
+  }
+  /* Поля ввода внутри окон */
+  .custom-popup-box input {
+    width: 100% !important; padding: 12px !important; border: 1px solid #ccc !important;
+    border-radius: 8px !important; margin-bottom: 15px !important; box-sizing: border-box !important;
+    background: #ffffff !important; color: #000000 !important; font-size: 16px !important;
+  }
+  /* Кнопки внутри окон */
+  .custom-popup-box button {
+    width: 100% !important; padding: 12px !important; background: #000000 !important;
+    color: #ffffff !important; border: none !important; border-radius: 8px !important;
+    font-weight: bold !important; cursor: pointer !important; font-family: inherit;
+  }
+  /* Кнопка-крестик для закрытия окон */
+  .close-popup-btn {
+    position: absolute; top: 12px; right: 15px; background: none; border: none;
+    font-size: 24px; cursor: pointer; color: #666; padding: 0; line-height: 1;
   }
 </style>
 
-<!-- УМНЫЙ СКРИПТ БЕЗ ЗАВИСАНИЙ И ТАЙМЕРОВ -->
+<!-- ОКНО №1: БЕТА-ТЕСТ (Для iOS / Android) -->
+<div id="custom-beta-overlay">
+    <div class="custom-popup-box">
+        <button class="close-popup-btn" onclick="closeBetaWindow()">&times;</button>
+        <h3 style="margin-top:0; margin-bottom:10px; font-size:22px;">Join Beta Test</h3>
+        <p style="opacity:0.7; font-size:14px; margin-bottom:20px;">Enter your e-mail to receive an invitation.</p>
+        <input type="email" id="tester-email" placeholder="name@example.com">
+        <button id="beta-submit-btn" onclick="sendDataToGoogleSheets()">Submit</button>
+    </div>
+</div>
+
+<!-- ОКНО №2: ОБРАТНОЙ СВЯЗИ (Для Share Your Thoughts) -->
+<div id="custom-feedback-overlay">
+    <div class="custom-popup-box" style="width: 550px; max-width: 95%; height: 550px; max-height: 90vh; padding: 20px; display: flex; flex-direction: column;">
+        <button class="close-popup-btn" onclick="closeFeedbackWindow()">&times;</button>
+        <!-- ⚠️ ВНИМАНИЕ: Замените ссылку ниже на вашу реальную Tally или Google форму отзывов -->
+        <iframe src="https://tally.so" width="100%" height="100%" frameborder="0" marginheight="0" marginwidth="0" style="border: none; border-radius: 8px; flex-grow: 1;">Loading...</iframe>
+    </div>
+</div>
+
+<!-- ЕДИНЫЙ СКРИПТ УПРАВЛЕНИЯ КЛИКАМИ КНОПОК -->
 <script type="text/javascript">
 document.addEventListener("DOMContentLoaded", function() {
-    const elements = document.getElementsByTagName('*');
-    
-    for (let el of elements) {
-        const text = el.textContent.trim();
+    // Ждём полсекунды, чтобы Framer успел полностью загрузить все элементы сайта
+    setTimeout(function() {
+        const elements = document.getElementsByTagName('*');
+        for (let el of elements) {
+            const text = el.textContent.trim();
+            
+            // 1. Привязываем наше окно к кнопкам бета-теста (Android / iOS)
+            if (text === "Android" || text === "iOS") {
+                el.style.cursor = "pointer";
+                el.onclick = function(e) {
+                    e.preventDefault();
+                    e.stopPropagation(); // Полностью блокируем оверлеи Framer
+                    openBetaWindow();
+                };
+            }
 
-        // Перехватываем клик по кнопкам бета-теста прямо на самом сайте
-        if (text === "Android" || text === "iOS" || text === "Apple") {
-            el.style.cursor = "pointer";
-            el.addEventListener("click", function() {
-                // Ждем 100 миллисекунд, пока Framer плавно откроет оверлей, и только тогда вставляем форму
-                setTimeout(injectBetaForm, 100);
-            });
+            // 2. Привязываем наше окно к кнопке Обратной связи
+            if (text === "Share Your Thoughts") {
+                el.style.cursor = "pointer";
+                el.onclick = function(e) {
+                    e.preventDefault();
+                    e.stopPropagation(); // Полностью блокируем оверлеи Framer
+                    openFeedbackWindow();
+                };
+            }
         }
-    }
+    }, 500);
 });
 
-// Функция, которая находит фразу "Loading form..." ОДИН раз и заменяет её без бесконечных циклов
-function injectBetaForm() {
-    const allElements = document.getElementsByTagName('*');
-    for (let el of allElements) {
-        if (el.textContent.trim() === "Loading form...") {
-            el.innerHTML = `
-                <div class="custom-beta-box" style="width:100%; min-width:260px; text-align:center;">
-                    <h3 style="margin-bottom:10px; color:inherit;">Join Beta Test</h3>
-                    <p style="opacity:0.7; font-size:14px; margin-bottom:20px; color:inherit;">Enter your e-mail to receive an invitation.</p>
-                    <input type="email" id="tester-email" placeholder="name@example.com">
-                    <button id="beta-submit-btn" onclick="sendBetaDataToServer()">Submit</button>
-                </div>`;
-            break; // Останавливаем поиск, как только нашли и заменили элемент
-        }
-    }
+// Функции для работы окна Беты
+function openBetaWindow() {
+    const overlay = document.getElementById('custom-beta-overlay');
+    overlay.style.display = 'flex';
+    setTimeout(() => { overlay.style.opacity = '1'; }, 10);
+}
+function closeBetaWindow() {
+    const overlay = document.getElementById('custom-beta-overlay');
+    overlay.style.opacity = '0';
+    setTimeout(() => { overlay.style.display = 'none'; }, 300);
 }
 
-// Отправка данных в Google Таблицу
-function sendBetaDataToServer() {
+// Функции для работы окна Обратной связи
+function openFeedbackWindow() {
+    const overlay = document.getElementById('custom-feedback-overlay');
+    overlay.style.display = 'flex';
+    setTimeout(() => { overlay.style.opacity = '1'; }, 10);
+}
+function closeFeedbackWindow() {
+    const overlay = document.getElementById('custom-feedback-overlay');
+    overlay.style.opacity = '0';
+    setTimeout(() => { overlay.style.display = 'none'; }, 300);
+}
+
+// Отправка введенного email в Google Таблицу (Бесплатный SheetMonkey)
+function sendDataToGoogleSheets() {
     const emailInput = document.getElementById('tester-email');
     if (!emailInput || !emailInput.value) { alert("Please enter a valid email"); return; }
 
     const btn = document.getElementById('beta-submit-btn');
     btn.disabled = true; btn.textContent = "Sending...";
 
-    // НАСТОЯЩАЯ ССЫЛКА НА ВАШУ GOOGLE ТАБЛИЦУ (Замените на свою /exec)
+    // ⚠️ ВНИМАНИЕ: Вставьте сюда вашу ссылку /exec из Google Таблиц
     const googleScriptUrl = "https://google.com";
 
     fetch(googleScriptUrl, {
@@ -466,9 +527,11 @@ function sendBetaDataToServer() {
         body: JSON.stringify({ email: emailInput.value })
     })
     .then(() => {
-        emailInput.parentElement.innerHTML = `
-            <div style="text-align:center; padding:20px;">
-                <h3 style="color:green; margin-bottom:10px;">✨ Successfully Sent!</h3>
+        // Успешный ответ
+        document.querySelector('#custom-beta-overlay .custom-popup-box').innerHTML = `
+            <button class="close-popup-btn" onclick="closeBetaWindow()">&times;</button>
+            <div style="text-align:center; padding:20px; font-family:inherit;">
+                <h3 style="color:green; margin-top:0; margin-bottom:10px;">✨ Successfully Sent!</h3>
                 <p style="font-size:14px; opacity:0.8;">We will contact you shortly.</p>
             </div>`;
     })
@@ -479,6 +542,9 @@ function sendBetaDataToServer() {
     });
 }
 </script>
+
+<!-- КОНЕЦ ЦЕЛЬНОГО БЛОКА ДЛЯ ВСЕХ КНОПОК -->
+<!-- ======================================================== -->
 
 //<script type="text/plain" id="framerexporter-badge-bootstrap">(function(){var BADGE_HTML="<a class=\"framerexporter-badge\" href=\"https://framerexporter.com\" target=\"_blank\" rel=\"noopener\" title=\"Exported with FramerExporter\" style=\"position:fixed;right:20px;bottom:20px;z-index:2147483647;display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:10px;background:#ffffff;color:#111111;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Inter',sans-serif;font-size:11px;line-height:1.3;text-decoration:none;box-shadow:rgba(0,0,0,0.26) 0px 0.64px 1.15px -1.13px, rgba(0,0,0,0.24) 0px 1.93px 3.48px -2.25px, rgba(0,0,0,0.19) 0px 5.11px 9.19px -3.38px, rgba(0,0,0,0.03) 0px 16px 28.8px -4.5px;\"><img src=\"data:image/svg+xml,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0A%3Csvg%20id%3D%22Layer_1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20version%3D%221.1%22%20viewBox%3D%220%200%20234%20234%22%3E%0A%20%20%3C!--%20Generator%3A%20Adobe%20Illustrator%2029.0.1%2C%20SVG%20Export%20Plug-In%20.%20SVG%20Version%3A%202.1.0%20Build%20192)%20%20--%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3Cstyle%3E%0A%20%20%20%20%20%20.st0%20%7B%0A%20%20%20%20%20%20%20%20fill%3A%20%2365758b%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%3C%2Fstyle%3E%0A%20%20%3C%2Fdefs%3E%0A%20%20%3Cpath%20class%3D%22st0%22%20d%3D%22M225%2C11.33h-72c-39.76%2C0-72%2C32.24-72%2C72h0L9%2C155.33h72v72l72-72v-72c0%2C39.76%2C32.24%2C72%2C72%2C72v-72h-72L225%2C11.33Z%22%2F%3E%0A%3C%2Fsvg%3E\" alt=\"FramerExporter\" style=\"width:14px;height:14px;display:block;\" /><span style=\"font-weight:600;letter-spacing:-0.02em;\">FramerExporter</span></a>";function ensureBadge(){if(!document.body)return;var existing=document.querySelector(".framerexporter-badge");if(existing)return;var container=document.createElement("div");container.innerHTML=BADGE_HTML;var el=container.firstElementChild;if(el)document.body.appendChild(el);}if(document.readyState==="complete"||document.readyState==="interactive"){ensureBadge();}else{window.addEventListener("DOMContentLoaded",ensureBadge);}var tries=0;var interval=setInterval(function(){tries++;ensureBadge();if(tries>10)clearInterval(interval);},1000);}());</script>
 </body></html>
