@@ -395,6 +395,63 @@ function selectLangAction(langCode, manualUrl) {
     }
 }
 </script>
+//////////////
+	<!-- СКРИПТ СБОРА EMAIL ДЛЯ БЕТА-ТЕСТА -->
+<script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function() {
+    // Каждые полсекунды проверяем, не открыл ли пользователь оверлей
+    setInterval(function() {
+        const allElements = document.getElementsByTagName('*');
+        for (let el of allElements) {
+            // Если скрипт нашел нашу фразу-маркер внутри оверлея
+            if (el.textContent.trim() === "Loading form...") {
+                // Мгновенно заменяем её на красивую форму ввода email
+                el.innerHTML = `
+                    <div style="text-align:center; font-family:inherit; color:inherit; width:100%;">
+                        <h3 style="margin-bottom:10px; font-size:20px;">Join Beta Test</h3>
+                        <p style="opacity:0.7; font-size:14px; margin-bottom:20px;">Enter your e-mail to receive an invitation.</p>
+                        <input type="email" id="tester-email" placeholder="name@example.com" style="width:100%; padding:12px; border:1px solid rgba(0,0,0,0.15); border-radius:8px; margin-bottom:15px; font-family:inherit; box-sizing:border-box; background:transparent; color:inherit;">
+                        <button id="beta-submit-btn" onclick="sendDataToGoogle()" style="width:100%; padding:12px; background:#000000; color:#ffffff; border:none; border-radius:8px; font-weight:bold; cursor:pointer; font-family:inherit;">Submit</button>
+                    </div>`;
+            }
+        }
+    }, 500);
+});
+
+// Функция отправки e-mail в вашу Google Таблицу (замена SheetMonkey)
+function sendDataToGoogle() {
+    const emailInput = document.getElementById('tester-email');
+    if (!emailInput || !emailInput.value) { alert("Please enter a valid email"); return; }
+
+    const btn = document.getElementById('beta-submit-btn');
+    btn.disabled = true;
+    btn.textContent = "Sending...";
+
+    // ВСТАВЬТЕ СЮДА ВАШУ ССЫЛКУ ИЗ GOOGLE ТАБЛИЦЫ (которая заканчивается на /exec)
+    const googleScriptUrl = "https://google.com";
+
+    fetch(googleScriptUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: emailInput.value })
+    })
+    .then(() => {
+        // Показываем сообщение об успешном успехе прямо в этом же окошке
+        emailInput.parentElement.innerHTML = `
+            <div style="text-align:center; padding:20px;">
+                <h3 style="color:green; margin-bottom:10px;">✨ Successfully Sent!</h3>
+                <p style="font-size:14px; opacity:0.8;">We will contact you shortly.</p>
+            </div>`;
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Error sending. Please try again.");
+        btn.disabled = false;
+        btn.textContent = "Submit";
+    });
+}
+</script>
 
 
 
