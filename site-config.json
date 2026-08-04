@@ -17,3 +17,39 @@
     "url": "https://tally.so"
   }
 }
+{
+  "app_video": { "youtubeId": "ВАШ_ID_ВИДЕО_С_YOUTUBE" },
+  "google_play": { "is_released": false, "store_url": "https://google.com" },
+  "app_store": { "is_released": false, "store_url": "https://apple.com" },
+  "beta_testing": { "google_script_url": "https://google.com" },
+  "feedback_form": { "url": "https://tally.so" },
+  
+  "languages": {
+    "en": {
+      "label": "English",
+      "watch_video": "Watch video overview",
+      "google_play_text": "Get it on Google Play",
+      "app_store_text": "Download on App Store",
+      "beta_apple": "Apple",
+      "beta_android": "Android",
+      "feedback": "Share Your Thoughts",
+      "beta_title": "Join Beta Test",
+      "beta_desc": "Enter your e-mail to receive a testing invitation.",
+      "beta_btn": "Submit Application",
+      "success_msg": "Successfully Sent!"
+    },
+    "ru": {
+      "label": "Русский",
+      "watch_video": "Смотреть обзор видео",
+      "google_play_text": "Скачать в Google Play",
+      "app_store_text": "Скачать в App Store",
+      "beta_apple": "Тест для Apple",
+      "beta_android": "Тест для Android",
+      "feedback": "Поделиться мыслями",
+      "beta_title": "Регистрация в бета-тест",
+      "beta_desc": "Введите ваш e-mail, чтобы получить приглашение.",
+      "beta_btn": "Отправить заявку",
+      "success_msg": "Успешно отправлено!"
+    }
+  }
+}
