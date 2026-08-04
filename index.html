@@ -359,7 +359,7 @@ a[href*="framercommerce.com"] {
 <div id="google_translate_element" style="display:none;"></div>
 
 <!-- 2. СКРИПТ УПРАВЛЕНИЯ ГИБРИДНЫМ ПЕРЕВОДОМ -->
-<!-- 2. СКРИПТ УПРАВЛЕНИЯ ГИБРИДНЫМ ПЕРЕВОДОМ -->
+<!-- 2. СКРИПТ УПРАВЛЕНИЯ ГИБРИДНЫМ ПЕРЕВОДОМ (РАБОЧАЯ ГИБРИДНАЯ ВЕРСИЯ) -->
 <script type="text/javascript">
 // Функция открытия и закрытия меню при клике на кнопку Language
 function toggleLangMenu() {
@@ -373,32 +373,24 @@ function toggleLangMenu() {
     }
 }
 
-// Логика выбора языка (Гибридный режим)
+// Логика выбора языка (Новый гарантированный метод)
 function selectLangAction(langCode, manualUrl) {
     // Закрываем меню
     document.getElementById('custom-lang-dropdown').style.display = 'none';
 
     if (manualUrl && manualUrl !== "") {
-        // ЕСЛИ ССЫЛКА ЕСТЬ: Стираем остатки робота Google и уводим на ваш ручной сайт
-        document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" + window.location.hostname;
-        document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        window.location.hash = '';
+        // ЕСЛИ ССЫЛКА ЕСТЬ: Уводим на вашу качественную ручную страницу
         window.location.href = manualUrl;
     } else {
-        // ЕСЛИ ССЫЛКИ НЕТ: Записываем куки автоперевода в браузер и жестко перезапускаем страницу
-        document.cookie = "googtrans=/en/" + langCode + "; path=/; domain=" + window.location.hostname;
-        document.cookie = "googtrans=/en/" + langCode + "; path=/;";
-        window.location.hash = "#googtrans(en|" + langCode + ")";
-        window.location.reload();
+        // ЕСЛИ ССЫЛКИ НЕТ: Берем текущую ссылку на ваш сайт и открываем её через официальный безопасный шлюз перевода Google
+        const currentUrl = window.location.href.split('#')[0]; // Берем чистый URL сайта
+        
+        // Создаем официальную прямую ссылку на автоперевод этой страницы
+        const googleTranslateUrl = "https://google.com" + langCode + "&u=" + encodeURIComponent(currentUrl);
+        
+        // Открываем переведенный сайт прямо в этой же вкладке
+        window.location.href = googleTranslateUrl;
     }
-}
-
-// Инициализация скрытого виджета Google Переводчика
-function googleTranslateElementInit() {
-    new google.translate.TranslateElement({
-        pageLanguage: 'en',
-        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-    }, 'google_translate_element');
 }
 </script>
 
