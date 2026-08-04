@@ -448,18 +448,6 @@ function googleTranslateElementInit() { new google.translate.TranslateElement({ 
 </body></html>
 
 
-<script>
-// Скрипт мгновенно переводит на выбранную страницу
-function navigateToLanguage(url) {
-    if (url) window.location.href = url;
-}
-
-// Автоматически подсвечивает текущий язык в меню при загрузке
-document.addEventListener("DOMContentLoaded", function() {
-    const select = document.getElementById('lang-select');
-    select.value = window.location.href.split('?')[0]; // Убирает лишние параметры из ссылки
-});
-</script>
 //////////
 <!-- Контейнер для нашего кастомного меню и скрытого виджета Google -->
 <div style="position: fixed; top: 20px; right: 20px; z-index: 999999; display: flex; align-items: center; gap: 10px;">
