@@ -442,6 +442,166 @@ function googleTranslateElementInit() { new google.translate.TranslateElement({ 
 <div id="google_translate_element" style="display:none;"></div>
 <script type="text/javascript" src="//://google.com"></script>
 
+<!-- ======================================================== -->
+<!-- НАЧАЛО БЛОКА АВТОМАТИЗАЦИИ (Вставлять перед самым </body>) -->
+
+<!-- СТИЛИ ДЛЯ СКРЫТИЯ ЛИШНИХ ПЛАШЕК GOOGLE -->
+<style>
+  #google_translate_element, 
+  .goog-te-banner-frame, 
+  .goog-te-gadget, 
+  .goog-te-menu-value,
+  .skiptranslate,
+  iframe.goog-te-menu-frame {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  body {
+    top: 0 !important;
+  }
+</style>
+
+<!-- ТЕХНИЧЕСКИЙ БЛОК ДЛЯ СВЯЗИ С GOOGLE -->
+<div id="google_translate_element" style="display:none;"></div>
+
+<!-- ГЛАВНЫЙ СЦЕНАРИЙ УПРАВЛЕНИЯ ВСЕМИ КНОПКАМИ И ПЕРЕВОДОМ -->
+<script type="text/javascript">
+let siteConfig = null;
+let currentLang = 'en';
+
+document.addEventListener("DOMContentLoaded", function() {
+    fetch('./site-config.json') 
+    .then(res => res.json())
+    .then(data => {
+        siteConfig = data;
+        initializeSmartSite();
+    })
+    .catch(err => console.error("Config error:", err));
+});
+
+function initializeSmartSite() {
+    if (!siteConfig) return;
+    const allElements = document.getElementsByTagName('*');
+    
+    for (let el of allElements) {
+        const text = el.textContent.trim();
+
+        // 1. Кнопка выбора языков (находит по слову Language или Language 🌐)
+        if (text.includes("Language") || text === "Language 🌐") {
+            el.style.cursor = "pointer";
+            el.onclick = function(e) { e.preventDefault(); loadLanguageMenuInsidePopup(); };
+        }
+        
+        // 2. Кнопка видеорекламы
+        if (text === "Watch video overview") {
+            el.style.cursor = "pointer"; 
+            el.onclick = function(e) { e.preventDefault(); openYoutubePlayer(); };
+        }
+        
+        // 3. Заглушка Google Play
+        if (siteConfig.google_play.is_released && text === "Get it on Google Play") { 
+            el.innerHTML = `<a href="${siteConfig.google_play.store_url}" target="_blank" style="color:inherit; text-decoration:none; font-weight:bold;">Get it on Google Play</a>`;
+        }
+        
+        // 4. Заглушка App Store
+        if (text === "Download on App Store" && siteConfig.app_store.is_released) { 
+            el.innerHTML = `<a href="${siteConfig.app_store.store_url}" target="_blank" style="color:inherit; text-decoration:none; font-weight:bold;">Download on App Store</a>`;
+        }
+        
+        // 5 и 6. Кнопки бета-тестирования (Apple и Android)
+        if (text === "Apple" || text === "Android") {
+            el.style.cursor = "pointer"; 
+            el.onclick = function(e) { e.preventDefault(); loadBetaForm(); };
+        }
+        
+        // 7. Кнопка обратной связи
+        if (text === "Share Your Thoughts") {
+            el.style.cursor = "pointer"; 
+            el.onclick = function(e) { e.preventDefault(); loadFeedbackForm(); };
+        }
+    }
+}
+
+function loadLanguageMenuInsidePopup() {
+    const container = document.getElementById('popup-dynamic-content');
+    if (!container || !siteConfig || !siteConfig.languages) return;
+
+    let htmlButtons = '';
+    for (let code in siteConfig.languages) {
+        let lang = siteConfig.languages[code];
+        htmlButtons += `
+            <button onclick="handleLanguageSelection('${code}')" style="width:100%; padding:14px; margin-bottom:10px; background:var(--framer-color-surface, #f5f5f7); color:inherit; border:1px solid rgba(0,0,0,0.05); border-radius:10px; font-size:16px; font-weight:600; cursor:pointer; font-family:inherit; transition: background 0.2s;">
+                ${lang.label}
+            </button>
+        `;
+    }
+
+    container.innerHTML = `
+        <div style="text-align:center; font-family:inherit; color:inherit; min-width:280px;">
+            <h3 style="margin-bottom:20px;">Select Language</h3>
+            <div style="max-height:300px; overflow-y:auto;">
+                ${htmlButtons}
+            </div>
+        </div>
+    `;
+}
+
+function handleLanguageSelection(langCode) {
+    const langInfo = siteConfig.languages[langCode];
+    if (!langInfo) return;
+
+    document.getElementById('popup-dynamic-content').innerHTML = '';
+    const overlay = document.getElementById('universal-overlay');
+    if (overlay) { overlay.style.opacity = '0'; overlay.style.pointerEvents = 'none'; }
+
+    if (langInfo.url && langInfo.url !== "") {
+        window.location.hash = '';
+        document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        window.location.href = langInfo.url;
+    } else {
+        const googleSelect = document.querySelector('select.goog-te-combo');
+        if (googleSelect) {
+            googleSelect.value = langCode;
+            googleSelect.dispatchEvent(new Event('change'));
+        } else {
+            window.location.hash = `#googtrans(en|${langCode})`;
+            window.location.reload();
+        }
+    }
+}
+
+function openYoutubePlayer() {
+    const container = document.getElementById('popup-dynamic-content'); if (!container) return;
+    container.innerHTML = `<div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; width:100%;"><iframe src="https://youtube.com{siteConfig.app_video.youtubeId}?autoplay=1" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>`;
+}
+
+function loadBetaForm() {
+    const container = document.getElementById('popup-dynamic-content'); if (!container) return;
+    container.innerHTML = `<div style="text-align:center; font-family:inherit; color:inherit;"><h3 style="margin-bottom:10px;">Join Beta Test</h3><p style="opacity:0.7; font-size:14px; margin-bottom:20px;">Enter your e-mail to receive an invitation.</p><input type="email" id="tester-email" placeholder="name@example.com" style="width:100%; padding:12px; border:1px solid rgba(0,0,0,0.15); border-radius:8px; margin-bottom:15px; font-family:inherit; box-sizing:border-box; background:transparent; color:inherit;"><button id="beta-submit-btn" onclick="sendBetaEmail()" style="width:100%; padding:12px; background:var(--framer-color-primary, #000); color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer; font-family:inherit;">Submit</button></div>`;
+}
+
+function sendBetaEmail() {
+    const emailInput = document.getElementById('tester-email'); if (!emailInput || !emailInput.value) { alert("Enter email"); return; }
+    document.getElementById('beta-submit-btn').disabled = true;
+    fetch(siteConfig.beta_testing.google_script_url, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: emailInput.value }) })
+    .then(() => { document.getElementById('popup-dynamic-content').innerHTML = `<div style="text-align:center; padding:20px;"><h3 style="color:green;">✨ Sent!</h3></div>`; })
+    .catch(() => { alert("Error"); document.getElementById('beta-submit-btn').disabled = false; });
+}
+
+function loadFeedbackForm() { 
+    if (!siteConfig || !siteConfig.feedback_form.url) return; 
+    window.open(siteConfig.feedback_form.url, '_blank'); 
+}
+
+function googleTranslateElementInit() {
+    new google.translate.TranslateElement({ pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE }, 'google_translate_element');
+}
+</script>
+
+<script type="text/javascript" src="//://google.com"></script>
+
+<!-- КОНЕЦ БЛОКА АВТОМАТИЗАЦИИ -->
+<!-- ======================================================== -->
 
 
 
