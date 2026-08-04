@@ -463,3 +463,14 @@ document.addEventListener("DOMContentLoaded", function() {
     select.value = window.location.href.split('?')[0]; // Убирает лишние параметры из ссылки
 });
 </script>
+//////////
+<!-- Контейнер для нашего кастомного меню и скрытого виджета Google -->
+<div style="position: fixed; top: 20px; right: 20px; z-index: 999999; display: flex; align-items: center; gap: 10px;">
+    <select id="lang-select" onchange="handleLanguageChange(this.value)" style="padding: 8px 12px; border-radius: 20px; border: 1px solid rgba(0,0,0,0.1); background: #fff; cursor: pointer; font-size: 14px; font-weight: 500; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+        <!-- Сюда языки автоматически добавятся из JSON -->
+    </select>
+    <!-- Сам скрытый блок Google (он нужен скрипту, но мы прячем его визуально, чтобы не портить дизайн) -->
+    <div id="google_translate_element" style="display:none;"></div>
+</div>
+
+///////////
