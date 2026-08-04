@@ -446,20 +446,40 @@ function googleTranslateElementInit() { new google.translate.TranslateElement({ 
 <!-- НАЧАЛО БЛОКА АВТОМАТИЗАЦИИ (Вставлять перед самым </body>) -->
 
 <!-- СТИЛИ ДЛЯ СКРЫТИЯ ЛИШНИХ ПЛАШЕК GOOGLE -->
+<!-- УЛУЧШЕННЫЕ НЕВИДИМЫЕ СТИЛИ (Намертво стирают любые окошки и стрелочки Google) -->
 <style>
+  /* Скрываем само встроенное окно, гаджет и все служебные рамки */
   #google_translate_element, 
   .goog-te-banner-frame, 
   .goog-te-gadget, 
   .goog-te-menu-value,
   .skiptranslate,
-  iframe.goog-te-menu-frame {
+  .goog-te-gadget-icon,
+  #goog-gt-tt,
+  .goog-tooltip,
+  .goog-tooltip:hover {
     display: none !important;
     visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
   }
+  
+  /* Отдельно уничтожаем скрытые фреймы Google, которые создают выпадающие списки */
+  iframe.goog-te-menu-frame,
+  iframe.skiptranslate,
+  body > .skiptranslate {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+  }
+
+  /* Запрещаем Google сдвигать сайт вниз на мобильных и десктопах */
   body {
     top: 0 !important;
+    position: static !important;
   }
 </style>
+
 
 <!-- ТЕХНИЧЕСКИЙ БЛОК ДЛЯ СВЯЗИ С GOOGLE -->
 <div id="google_translate_element" style="display:none;"></div>
