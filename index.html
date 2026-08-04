@@ -359,6 +359,7 @@ a[href*="framercommerce.com"] {
 <div id="google_translate_element" style="display:none;"></div>
 
 <!-- 2. СКРИПТ УПРАВЛЕНИЯ ГИБРИДНЫМ ПЕРЕВОДОМ -->
+<!-- 2. СКРИПТ УПРАВЛЕНИЯ ГИБРИДНЫМ ПЕРЕВОДОМ -->
 <script type="text/javascript">
 // Функция открытия и закрытия меню при клике на кнопку Language
 function toggleLangMenu() {
@@ -379,19 +380,16 @@ function selectLangAction(langCode, manualUrl) {
 
     if (manualUrl && manualUrl !== "") {
         // ЕСЛИ ССЫЛКА ЕСТЬ: Стираем остатки робота Google и уводим на ваш ручной сайт
+        document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" + window.location.hostname;
         document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         window.location.hash = '';
         window.location.href = manualUrl;
     } else {
-        // ЕСЛИ ССЫЛКИ НЕТ: Принудительно запускаем фоновый автоперевод Google прямо тут
-        const googleSelect = document.querySelector('select.goog-te-combo');
-        if (googleSelect) {
-            googleSelect.value = langCode;
-            googleSelect.dispatchEvent(new Event('change'));
-        } else {
-            window.location.hash = `#googtrans(en|${langCode})`;
-            window.location.reload();
-        }
+        // ЕСЛИ ССЫЛКИ НЕТ: Записываем куки автоперевода в браузер и жестко перезапускаем страницу
+        document.cookie = "googtrans=/en/" + langCode + "; path=/; domain=" + window.location.hostname;
+        document.cookie = "googtrans=/en/" + langCode + "; path=/;";
+        window.location.hash = "#googtrans(en|" + langCode + ")";
+        window.location.reload();
     }
 }
 
@@ -403,6 +401,6 @@ function googleTranslateElementInit() {
     }, 'google_translate_element');
 }
 </script>
-	
+
 
 </body></html>
