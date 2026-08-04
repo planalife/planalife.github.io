@@ -397,49 +397,57 @@ function selectLangAction(langCode, manualUrl) {
 </script>
 //////////////
 <!-- ======================================================== -->
-<!-- НАЧАЛО ЦЕЛЬНОГО БЛОКА ДЛЯ БЕТА-ТЕСТА И ОБРАТНОЙ СВЯЗИ -->
+<!-- ИСПРАВЛЕННЫЙ ЦЕЛЬНОГО БЛОК ДЛЯ БЕТА-ТЕСТА И ОТЗЫВОВ -->
 
-<!-- СТИЛИ ДЛЯ АВТОНОМНЫХ ОКЕН (Чтобы всё было ровно, красиво и контрастно) -->
+<!-- НОВЫЕ ИСПРАВЛЕННЫЕ СТИЛИ ОКЕН (Крестик исправлен, цвета наследованы) -->
 <style>
   /* Общие стили для черных фонов-оверлеев */
   #custom-beta-overlay, #custom-feedback-overlay {
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); z-index: 9999999;
-    align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease;
+    background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(5px); z-index: 9999999;
+    align-items: center; justify-content: center; opacity: 0; transition: opacity 0.25s ease;
   }
-  /* Белая контрастная плашка по центру */
+  /* Фирменная плашка по центру (Наследует фон вашего сайта автоматически) */
   .custom-popup-box {
-    background: #ffffff !important; color: #000000 !important;
-    padding: 30px; border-radius: 16px; width: 420px; max-width: 90%;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3); text-align: center;
+    background: var(--framer-body-background, #ffffff) !important; 
+    color: var(--framer-color-text, #000000) !important;
+    padding: 35px 30px 30px 30px; border-radius: 16px; width: 420px; max-width: 90%;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.25); text-align: center;
     font-family: -apple-system, BlinkMacSystemFont, sans-serif; position: relative;
     box-sizing: border-box;
   }
   /* Поля ввода внутри окон */
   .custom-popup-box input {
-    width: 100% !important; padding: 12px !important; border: 1px solid #ccc !important;
+    width: 100% !important; padding: 12px !important; border: 1px solid rgba(0,0,0,0.15) !important;
     border-radius: 8px !important; margin-bottom: 15px !important; box-sizing: border-box !important;
     background: #ffffff !important; color: #000000 !important; font-size: 16px !important;
   }
-  /* Кнопки внутри окон */
+  /* Кнопки отправки */
   .custom-popup-box button {
-    width: 100% !important; padding: 12px !important; background: #000000 !important;
+    width: 100% !important; padding: 12px !important; 
+    background: var(--framer-color-primary, #000000) !important; 
     color: #ffffff !important; border: none !important; border-radius: 8px !important;
     font-weight: bold !important; cursor: pointer !important; font-family: inherit;
   }
-  /* Кнопка-крестик для закрытия окон */
+  /* ИСПРАВЛЕННАЯ КНОПКА-КРЕСТИК (Строго зафиксирована в углу, маленькая и аккуратная) */
   .close-popup-btn {
-    position: absolute; top: 12px; right: 15px; background: none; border: none;
-    font-size: 24px; cursor: pointer; color: #666; padding: 0; line-height: 1;
+    position: absolute !important; top: 12px !important; right: 12px !important;
+    width: 28px !important; height: 28px !important; min-width: 28px !important; max-width: 28px !important;
+    background: rgba(0,0,0,0.05) !important; border: none !important; border-radius: 50% !important;
+    font-size: 18px !important; line-height: 26px !important; cursor: pointer !important; 
+    color: var(--framer-color-text, #666) !important; padding: 0 !important; 
+    display: flex !important; align-items: center; justify-content: center;
+    z-index: 10000000 !important; box-shadow: none !important;
   }
+  .close-popup-btn:hover { background: rgba(0,0,0,0.1) !important; }
 </style>
 
 <!-- ОКНО №1: БЕТА-ТЕСТ (Для iOS / Android) -->
 <div id="custom-beta-overlay">
     <div class="custom-popup-box">
         <button class="close-popup-btn" onclick="closeBetaWindow()">&times;</button>
-        <h3 style="margin-top:0; margin-bottom:10px; font-size:22px;">Join Beta Test</h3>
-        <p style="opacity:0.7; font-size:14px; margin-bottom:20px;">Enter your e-mail to receive an invitation.</p>
+        <h3 style="margin-top:5px; margin-bottom:10px; font-size:22px; color:inherit;">Join Beta Test</h3>
+        <p style="opacity:0.7; font-size:14px; margin-bottom:20px; color:inherit;">Enter your e-mail to receive an invitation.</p>
         <input type="email" id="tester-email" placeholder="name@example.com">
         <button id="beta-submit-btn" onclick="sendDataToGoogleSheets()">Submit</button>
     </div>
@@ -450,35 +458,32 @@ function selectLangAction(langCode, manualUrl) {
     <div class="custom-popup-box" style="width: 550px; max-width: 95%; height: 550px; max-height: 90vh; padding: 20px; display: flex; flex-direction: column;">
         <button class="close-popup-btn" onclick="closeFeedbackWindow()">&times;</button>
         <!-- ⚠️ ВНИМАНИЕ: Замените ссылку ниже на вашу реальную Tally или Google форму отзывов -->
-        <iframe src="https://tally.so" width="100%" height="100%" frameborder="0" marginheight="0" marginwidth="0" style="border: none; border-radius: 8px; flex-grow: 1;">Loading...</iframe>
+        <iframe src="https://tally.so" width="100%" height="100%" frameborder="0" marginheight="0" marginwidth="0" style="border: none; border-radius: 8px; flex-grow: 1; margin-top:20px;">Loading...</iframe>
     </div>
 </div>
 
 <!-- ЕДИНЫЙ СКРИПТ УПРАВЛЕНИЯ КЛИКАМИ КНОПОК -->
 <script type="text/javascript">
 document.addEventListener("DOMContentLoaded", function() {
-    // Ждём полсекунды, чтобы Framer успел полностью загрузить все элементы сайта
     setTimeout(function() {
         const elements = document.getElementsByTagName('*');
         for (let el of elements) {
             const text = el.textContent.trim();
             
-            // 1. Привязываем наше окно к кнопкам бета-теста (Android / iOS)
+            // 1. Кнопки бета-теста (Android / iOS)
             if (text === "Android" || text === "iOS") {
                 el.style.cursor = "pointer";
                 el.onclick = function(e) {
-                    e.preventDefault();
-                    e.stopPropagation(); // Полностью блокируем оверлеи Framer
+                    e.preventDefault(); e.stopPropagation();
                     openBetaWindow();
                 };
             }
 
-            // 2. Привязываем наше окно к кнопке Обратной связи
+            // 2. Кнопка Обратной связи
             if (text === "Share Your Thoughts") {
                 el.style.cursor = "pointer";
                 el.onclick = function(e) {
-                    e.preventDefault();
-                    e.stopPropagation(); // Полностью блокируем оверлеи Framer
+                    e.preventDefault(); e.stopPropagation();
                     openFeedbackWindow();
                 };
             }
@@ -495,7 +500,8 @@ function openBetaWindow() {
 function closeBetaWindow() {
     const overlay = document.getElementById('custom-beta-overlay');
     overlay.style.opacity = '0';
-    setTimeout(() => { overlay.style.display = 'none'; }, 300);
+    // Намертво отключаем и прячем фон, чтобы он не оставлял темный экран
+    setTimeout(() => { overlay.style.display = 'none'; }, 250);
 }
 
 // Функции для работы окна Обратной связи
@@ -507,10 +513,11 @@ function openFeedbackWindow() {
 function closeFeedbackWindow() {
     const overlay = document.getElementById('custom-feedback-overlay');
     overlay.style.opacity = '0';
-    setTimeout(() => { overlay.style.display = 'none'; }, 300);
+    // Намертво отключаем и прячем фон, чтобы он не оставлял темный экран
+    setTimeout(() => { overlay.style.display = 'none'; }, 250);
 }
 
-// Отправка введенного email в Google Таблицу (Бесплатный SheetMonkey)
+// Отправка введенного email в Google Таблицу
 function sendDataToGoogleSheets() {
     const emailInput = document.getElementById('tester-email');
     if (!emailInput || !emailInput.value) { alert("Please enter a valid email"); return; }
@@ -527,7 +534,6 @@ function sendDataToGoogleSheets() {
         body: JSON.stringify({ email: emailInput.value })
     })
     .then(() => {
-        // Успешный ответ
         document.querySelector('#custom-beta-overlay .custom-popup-box').innerHTML = `
             <button class="close-popup-btn" onclick="closeBetaWindow()">&times;</button>
             <div style="text-align:center; padding:20px; font-family:inherit;">
