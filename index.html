@@ -321,42 +321,43 @@ a[href*="framercommerce.com"] {
     <!-- End of bodyEnd -->
 
 <!-- 1. СТИЛИ И ВНЕШНИЙ ВИД КНОПКИ С ГЛОБУСОМ -->
+<!-- 1. СТИЛИ И ВНЕШНИЙ ВИД КНОПКИ С ГЛОБУСОМ -->
 <style>
-  /* Кнопка в углу экрана */
   #custom-lang-btn {
     position: fixed; top: 20px; right: 20px; z-index: 999999;
     padding: 10px 16px; border-radius: 24px; background: #ffffff; color: #000000;
     font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 14px; font-weight: 600;
     box-shadow: 0 4px 16px rgba(0,0,0,0.12); cursor: pointer; border: 1px solid rgba(0,0,0,0.08);
   }
-  /* Выплывающее окошко со списком языков */
   #custom-lang-dropdown {
     display: none; position: fixed; top: 70px; right: 20px; z-index: 999999;
-    background: #ffffff; border-radius: 12px; padding: 8px; width: 160px;
+    background: #ffffff; border-radius: 12px; padding: 8px; width: 170px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.15); border: 1px solid rgba(0,0,0,0.08);
     font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   }
-  #custom-lang-dropdown button {
-    width: 100%; padding: 10px; border: none; background: none; text-align: left;
-    font-size: 14px; font-weight: 500; cursor: pointer; border-radius: 6px; color: #000;
+  #custom-lang-dropdown a, #custom-lang-dropdown button {
+    display: block; width: 100%; padding: 10px; border: none; background: none; text-align: left;
+    font-size: 14px; font-weight: 500; cursor: pointer; border-radius: 6px; color: #000 !important;
+    text-decoration: none !important; box-sizing: border-box;
   }
-  #custom-lang-dropdown button:hover { background: #f5f5f7; }
-  /* Полностью уничтожаем уродливые стандартные панели Google */
-  #google_translate_element, .goog-te-banner-frame, .goog-te-gadget, .skiptranslate, iframe.goog-te-menu-frame { display: none !important; visibility: hidden !important; }
-  body { top: 0 !important; position: static !important; }
+  #custom-lang-dropdown a:hover, #custom-lang-dropdown button:hover { background: #f5f5f7; }
 </style>
 
 <!-- ВИЗУАЛЬНЫЕ ЭЛЕМЕНТЫ КНОПКИ И МЕНЮ -->
 <div id="custom-lang-btn" onclick="toggleLangMenu()">Language 🌐</div>
 
 <div id="custom-lang-dropdown">
-  <!-- Наш список: для Русского будет переход, для остальных — автоперевод -->
-  <button onclick="selectLangAction('ru', 'https://planalife.app/ru')">Русский 🇷🇺</button>
-  <button onclick="selectLangAction('es', '')">Español 🇪🇸</button>
-  <button onclick="selectLangAction('de', '')">Deutsch 🇩🇪</button>
+  <!-- ВНИМАНИЕ: Замените 'https://github.io' на реальный чистый адрес вашего сайта -->
+  
+  <!-- Ссылка на ваш готовый ручной русский сайт -->
+  <a href="https://github.ioru.html" onclick="toggleLangMenu()">Русский 🇷🇺</a>
+  
+  <!-- Прямая ссылка-шлюз на автоперевод текущего сайта на Испанский -->
+  <a href="https://translate.google.com/translate?sl=en&tl=es&u=https://planalife.app" onclick="toggleLangMenu()">Español 🇪🇸</a>
+  
+  <!-- Прямая ссылка-шлюз на автоперевод текущего сайта на Немецкий -->
+  <a href="https://translate.google.com/translate?sl=en&tl=de&u=https://planalife.app" onclick="toggleLangMenu()">Deutsch 🇩🇪</a>
 </div>
-
-<div id="google_translate_element" style="display:none;"></div>
 
 <!-- 2. СКРИПТ УПРАВЛЕНИЯ ГИБРИДНЫМ ПЕРЕВОДОМ -->
 <!-- 2. СКРИПТ УПРАВЛЕНИЯ ГИБРИДНЫМ ПЕРЕВОДОМ (РАБОЧАЯ ГИБРИДНАЯ ВЕРСИЯ) -->
