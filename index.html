@@ -403,6 +403,15 @@ document.addEventListener("DOMContentLoaded", function() {
     setInterval(function() {
         const allElements = document.getElementsByTagName('*');
         for (let el of allElements) {
+			// Если скрипт нашел фразу-маркер внутри оверлея обратной связи
+if (el.textContent.trim() === "Loading feedback...") {
+    // Скрипт мгновенно сотрет надпись и откроет вашу внешнюю анкету (например, Tally или Google Форму) прямо внутри оверлея через iframe!
+    el.innerHTML = `
+        <div style="width:100%; height:500px; min-width:320px;">
+            <iframe src="https://tally.so" width="100%" height="100%" frameborder="0" marginheight="0" marginwidth="0" title="Feedback Form">Loading...</iframe>
+        </div>`;
+}
+
             // Если скрипт нашел нашу фразу-маркер внутри оверлея
             if (el.textContent.trim() === "Loading form...") {
                 // Мгновенно заменяем её на красивую форму ввода email
