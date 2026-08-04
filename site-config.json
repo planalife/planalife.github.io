@@ -25,9 +25,9 @@
   "feedback_form": { "url": "https://tally.so" },
   
   "languages": {
-    "en": { "label": "English", "url": "https://github.io" },
-    "ru": { "label": "Русский", "url": "https://github.ioru.html" },
-    "es": { "label": "Español", "url": "" },
-    "de": { "label": "Deutsch", "url": "" }
+    "en": { "label": "English 🇬🇧", "url": "https://github.io" },
+    "ru": { "label": "Русский 🇷🇺", "url": "https://github.ioru.html" },
+    "es": { "label": "Español 🇪🇸", "url": "" },
+    "de": { "label": "Deutsch 🇩🇪", "url": "" }
   }
 }
