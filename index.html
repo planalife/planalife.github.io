@@ -342,10 +342,12 @@ function initializeSmartSite() {
         const text = el.textContent.trim();
 
         // 1. КНОПКА КАНАЛА ЯЗЫКОВ (Новая функция)
-        if (text === "Language") {
-            el.style.cursor = "pointer";
-            el.onclick = function(e) { e.preventDefault(); loadLanguageMenuInsidePopup(); };
-        }
+       // Код проверяет строго слово Language, иконка мешать не будет!
+if (text.includes("Select Language") || text === "Select Language") {
+    el.style.cursor = "pointer";
+    el.onclick = function(e) { e.preventDefault(); loadLanguageMenuInsidePopup(); };
+}
+
         
         // 2. Кнопка видеорекламы
         if (text === "Watch video overview") {
