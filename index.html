@@ -460,55 +460,55 @@ function selectLangAction(langCode, manualUrl) {
     </div>
 </div>
 <!-- КОНЕЦ ЧАСТИ 1 -->
+	
 <!-- ******************************************************** -->
-
-<!-- ******************************************************** -->
-<!-- ФИНАЛЬНАЯ ЧАСТЬ 2: МОБИЛЬНЫЙ СКРИПТ С НАЖАТИЕМ НА ЭКРАН -->
+	
+<!-- ФИНАЛЬНАЯ ЧАСТЬ 2: МОБИЛЬНЫЙ СКРИПТ С ЗАКРЫТИЕМ ПО ФОНУ -->
 <script type="text/javascript">
 const googleScriptUrl = "https://script.google.com/macros/s/AKfycbzCJj2ZgkSxwoLYIJWvRdA9rP6u42rXIEwSanNL1uJXeYWKeAydVlS4lnVkyRMhf8p1/exec";
-
-
 let activeBetaType = "Beta"; 
 
-// Функция для мгновенной проверки: на что именно нажал пользователь пальцем или мышкой
+// Функция для мгновенной проверки кликов и касаний
 function handleGlobalClick(e) {
-    // Проверяем сам элемент, на который нажали, и его родителей (на случай если нажали чуть мимо букв)
     let target = e.target;
+    
+    // ХИТРОСТЬ: Если пользователь кликнул прямо по нашему темному фону (вне розовой плашки)
+    if (target.id === "custom-beta-overlay") {
+        e.preventDefault(); e.stopPropagation();
+        closeBetaWindow();
+        return;
+    }
+    if (target.id === "custom-feedback-overlay") {
+        e.preventDefault(); e.stopPropagation();
+        closeFeedbackWindow();
+        return;
+    }
+
+    // Проверяем элементы для открытия окон (кнопки)
     while (target && target !== document.body) {
         if (target.textContent) {
-            // Очищаем текст от скрытых пробелов
             const text = target.textContent.replace(/\s+/g, ' ').trim();
             
-            // 1. Если палец коснулся кнопки Android
             if (text === "Android" || text === "Get it on Google Play") {
                 e.preventDefault(); e.stopPropagation();
-                activeBetaType = "Android Beta"; 
-                openBetaWindow();
-                return; // Останавливаем проверку, окно уже открыто
+                activeBetaType = "Android Beta"; openBetaWindow(); return;
             }
-            
-            // 2. Если палец коснулся кнопки iOS
             if (text === "iOS" || text === "Apple" || text === "Download on App Store") {
                 e.preventDefault(); e.stopPropagation();
-                activeBetaType = "iOS Beta"; 
-                openBetaWindow();
-                return;
+                activeBetaType = "iOS Beta"; openBetaWindow(); return;
             }
-            
-            // 3. Если палец коснулся кнопки отзывов
             if (text === "Share Your Thoughts") {
                 e.preventDefault(); e.stopPropagation();
-                openFeedbackWindow();
-                return;
+                openFeedbackWindow(); return;
             }
         }
         target = target.parentNode;
     }
 }
 
-// ПРИВЯЗЫВАЕМ СЛЕЖКУ К ЭКРАНУ (Сработает мгновенно на ПК и телефонах)
-document.addEventListener("click", handleGlobalClick, true); // Для мышки
-document.addEventListener("touchstart", handleGlobalClick, {passive: false, capture: true}); // Для пальца на смартфонах
+// ПРИВЯЗЫВАЕМ СЛЕЖКУ К ЭКРАНУ
+document.addEventListener("click", handleGlobalClick, true);
+document.addEventListener("touchstart", handleGlobalClick, {passive: false, capture: true});
 
 function openBetaWindow() { 
     document.getElementById('custom-beta-overlay').querySelector('.custom-popup-box').innerHTML = `
@@ -567,6 +567,7 @@ function sendBetaDataToGoogle() {
     });
 }
 
+// Отправка ОТЗЫВА
 function sendFeedbackDataToGoogle() {
     const msgInput = document.getElementById('feedback-message');
     if (!msgInput || !msgInput.value.trim()) { alert("Please type your feedback message"); return; }
