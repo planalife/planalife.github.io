@@ -457,7 +457,7 @@ function selectLangAction(langCode, manualUrl) {
 <!-- ******************************************************** -->	
 
 <!-- ******************************************************** -->
-<!-- ФИНАЛЬНАЯ ЧАСТЬ 2: СКРИПТ УПРАВЛЕНИЯ РАЗМЕРАМИ И КЛИКАМИ -->
+<!-- ФИНАЛЬНАЯ ЧАСТЬ 2: УМНЫЙ РАЗДЕЛЬНЫЙ СКРИПТ (ПК И ТЕЛЕФОНЫ) -->
 <script type="text/javascript">
 const googleScriptUrl = "https://google.com";
 let activeBetaType = "Beta"; 
@@ -465,24 +465,26 @@ let activeBetaType = "Beta";
 let isBetaSent = false;
 let isFeedbackSent = false;
 
-// Умная функция: определяет, телефон перед нами или компьютер, и задает жесткие стили
+// Улучшенная функция разделения верстки для ПК и смартфонов
 function applySmartResponsiveStyles(overlayId) {
     const box = document.querySelector('#' + overlayId + ' .custom-popup-box');
     if (!box) return;
 
-    // ХИТРОСТЬ: Проверяем реальную ширину экрана устройства в пикселях
+    // Измеряем реальную физическую ширину экрана устройства
     const realWidth = window.innerWidth || document.documentElement.clientWidth;
 
-    if (realWidth < 768 || navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/iPhone/i)) {
-        // НАСТРОЙКИ ДЛЯ СМАРТФОНОВ: Крупная плашка наверху, спасающая от клавиатуры!
-        box.style.setProperty('top', '15px', 'important');
-        box.style.setProperty('left', '15px', 'important');
+    // ЖЕСТКАЯ ПРОВЕРКА: Если экран меньше 768px ИЛИ это мобильный телефон
+    if (realWidth <= 768 || navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/iPhone/i)) {
+        box.style.setProperty('top', '20px', 'important');
+        box.style.setProperty('left', '4%', 'important');
         box.style.setProperty('transform', 'none', 'important');
-        box.style.setProperty('width', 'calc(100vw - 30px)', 'important');
-        box.style.setProperty('max-width', 'calc(100vw - 30px)', 'important');
-        box.style.setProperty('padding', '30px 15px 20px 15px', 'important');
+        box.style.setProperty('width', '92vw', 'important');
+        box.style.setProperty('max-width', '92vw', 'important');
+        
+        // УВЕЛИЧИВАЕМ ВЫСОТУ ПЛАШКИ НА ТЕЛЕФОНЕ (Добавляем огромные просторные отступы внутри)
+        box.style.setProperty('padding', '60px 20px 50px 20px', 'important');
     } else {
-        // НАСТРОЙКИ ДЛЯ КОМПЬЮТЕРОВ: Строго по центру экрана
+        // ИДЕАЛЬНО ДЛЯ КОМПЬЮТЕРОВ (Строго по центру экрана, ничего не прилипает к углам)
         box.style.setProperty('top', '50%', 'important');
         box.style.setProperty('left', '50%', 'important');
         box.style.setProperty('transform', 'translate(-50%, -50%)', 'important');
@@ -546,7 +548,7 @@ function openBetaWindow() {
         <button id="beta-submit-btn" onclick="sendBetaDataToGoogle()">Submit</button>
     `;
     document.getElementById('custom-beta-overlay').style.display = 'flex'; 
-    applySmartResponsiveStyles('custom-beta-overlay'); // Принудительно выставляем размеры
+    applySmartResponsiveStyles('custom-beta-overlay');
 }
 
 function openFeedbackWindow() { 
@@ -559,7 +561,7 @@ function openFeedbackWindow() {
         <button id="feedback-submit-btn" onclick="sendFeedbackDataToGoogle()">Send Feedback</button>
     `;
     document.getElementById('custom-feedback-overlay').style.display = 'flex'; 
-    applySmartResponsiveStyles('custom-feedback-overlay'); // Принудительно выставляем размеры
+    applySmartResponsiveStyles('custom-feedback-overlay');
 }
 
 function closeAllCustomPopups() {
@@ -583,7 +585,7 @@ function sendBetaDataToGoogle() {
                 <h3 style="color:green; margin-top:0; font-size:24px;">✨ Successfully Sent!</h3>
                 <p style="font-size:15px; opacity:0.8; margin-bottom:0;">We will contact you shortly.</p>
             </div>`;
-        applySmartResponsiveStyles('custom-beta-overlay'); // Удерживаем верстку
+        applySmartResponsiveStyles('custom-beta-overlay');
         setTimeout(closeAllCustomPopups, 3000);
     })
     .catch(() => { 
@@ -612,7 +614,7 @@ function sendFeedbackDataToGoogle() {
                 <h3 style="color:green; margin-top:0; font-size:24px;">✨ Thank you!</h3>
                 <p style="font-size:15px; opacity:0.8; margin-bottom:0;">Your thoughts have been saved successfully.</p>
             </div>`;
-        applySmartResponsiveStyles('custom-feedback-overlay'); // Удерживаем верстку
+        applySmartResponsiveStyles('custom-feedback-overlay');
         setTimeout(closeAllCustomPopups, 3000);
     })
     .catch(() => {
