@@ -396,69 +396,34 @@ function selectLangAction(langCode, manualUrl) {
 }
 </script>
 <!--/////////////////////////////////////////////////////////////////////////////////////-->
-<!-- ======================================================== -->
 <!-- ******************************************************** -->
-<!-- ЧАСТЬ 1: СТИЛИ С ЗАЩИТОЙ ОТ МОБИЛЬНОГО АВТОЗУМА -->
+<!-- ЧАСТЬ 1: ПРОВЕРЕННЫЕ СТИЛИ И ОКНА (РУЧНОЙ ЗУМ РАЗРЕШЕН) -->
 <style>
   #custom-beta-overlay, #custom-feedback-overlay {
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(5px); z-index: 9999999;
-    pointer-events: auto;
+    pointer-events: auto; /* Позволяет ловить клики по фону */
   }
-  
-  /* Базовый стиль плашки для компьютеров */
   .custom-popup-box {
-    position: fixed !important;
+    position: fixed !important; top: 50% !important; left: 50% !important;
+    transform: translate(-50%, -50%) !important;
     background: #FFF5F5 !important; color: #4A2C22 !important;
-    border-radius: 16px; 
+    padding: 35px 25px 25px 25px; border-radius: 16px; width: 380px; max-width: 88%;
     box-shadow: 0 12px 40px rgba(143, 33, 0, 0.25); text-align: center;
     font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-    box-sizing: border-box !important; border: 1px solid rgba(143, 33, 0, 0.1); 
-    pointer-events: auto;
+    box-sizing: border-box; border: 1px solid rgba(143, 33, 0, 0.1); pointer-events: auto;
   }
-
-  /* Стиль плашки строго для смартфонов */
-  @media screen and (max-width: 768px), 
-         screen and (max-device-width: 768px) {
-    .custom-popup-box {
-      top: 15px !important;
-      left: 4% !important;
-      transform: none !important;
-      width: 92vw !important;
-      max-width: 92vw !important;
-      
-      /* Задаем плашке шикарную, просторную высоту за счет больших отступов сверху и снизу */
-      padding: 55px 20px 45px 20px !important; 
-    }
-  }
-  
-  /* ЗАЩИТА ОТ ЗУМА: Задаем шрифту строгие 16px для инпутов и текстовых полей */
-  .custom-popup-box input, 
-  .custom-popup-box textarea {
-    width: 100% !important; 
-    padding: 14px 12px !important; 
-    border: 1px solid rgba(143,33,0,0.2) !important;
-    border-radius: 8px !important; 
-    margin-bottom: 15px !important; 
-    box-sizing: border-box !important;
-    background: #ffffff !important; 
-    color: #000000 !important; 
-    
-    /* Эти 3 строчки — лекарство от улетания плашки вправо на смартфонах */
-    font-size: 16px !important; 
-    line-height: 1.3 !important;
-    font-family: inherit; 
+  .custom-popup-box input, .custom-popup-box textarea {
+    width: 100% !important; padding: 12px !important; border: 1px solid rgba(143,33,0,0.2) !important;
+    border-radius: 8px !important; margin-bottom: 15px !important; box-sizing: border-box !important;
+    background: #ffffff !important; color: #000000 !important; font-size: 16px !important; font-family: inherit;
   }
   .custom-popup-box textarea { height: 110px !important; resize: none !important; }
-  
-  /* Кнопка подтверждения со шрифтом 16px */
   .custom-popup-box button {
-    width: 100% !important; padding: 14px !important; background: #8F2100 !important; 
+    width: 100% !important; padding: 12px !important; background: #8F2100 !important; 
     color: #ffffff !important; border: none !important; border-radius: 8px !important;
-    font-weight: bold !important; cursor: pointer; font-family: inherit; 
-    font-size: 16px !important;
+    font-weight: bold !important; cursor: pointer; font-family: inherit;
   }
-  
   .close-popup-btn {
     position: absolute !important; top: 12px !important; right: 12px !important;
     width: 28px !important; height: 28px !important; min-width: 28px !important; max-width: 28px !important;
@@ -481,8 +446,10 @@ function selectLangAction(langCode, manualUrl) {
 <!-- КОНЕЦ ЧАСТИ 1 -->
 <!-- ******************************************************** -->
 
+
 <!-- ******************************************************** -->
-<!-- ФИНАЛЬНАЯ ЧАСТЬ 2: УМНЫЙ РАЗДЕЛЬНЫЙ СКРИПТ (ПК И ТЕЛЕФОНЫ) -->
+<!-- ******************************************************** -->
+<!-- ЧАСТЬ 2: СКРИПТ С АВТОЗАКРЫТИЕМ И РАЗДЕЛЬНЫМИ КЛИКАМИ -->
 <script type="text/javascript">
 const googleScriptUrl = "https://google.com";
 let activeBetaType = "Beta"; 
@@ -490,42 +457,16 @@ let activeBetaType = "Beta";
 let isBetaSent = false;
 let isFeedbackSent = false;
 
-// Улучшенная функция разделения верстки для ПК и смартфонов
-function applySmartResponsiveStyles(overlayId) {
-    const box = document.querySelector('#' + overlayId + ' .custom-popup-box');
-    if (!box) return;
-
-    // Измеряем реальную физическую ширину экрана устройства
-    const realWidth = window.innerWidth || document.documentElement.clientWidth;
-
-    // ЖЕСТКАЯ ПРОВЕРКА: Если экран меньше 768px ИЛИ это мобильный телефон
-    if (realWidth <= 768 || navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/iPhone/i)) {
-        box.style.setProperty('top', '20px', 'important');
-        box.style.setProperty('left', '4%', 'important');
-        box.style.setProperty('transform', 'none', 'important');
-        box.style.setProperty('width', '92vw', 'important');
-        box.style.setProperty('max-width', '92vw', 'important');
-        
-        // УВЕЛИЧИВАЕМ ВЫСОТУ ПЛАШКИ НА ТЕЛЕФОНЕ (Добавляем огромные просторные отступы внутри)
-        box.style.setProperty('padding', '60px 20px 50px 20px', 'important');
-    } else {
-        // ИДЕАЛЬНО ДЛЯ КОМПЬЮТЕРОВ (Строго по центру экрана, ничего не прилипает к углам)
-        box.style.setProperty('top', '50%', 'important');
-        box.style.setProperty('left', '50%', 'important');
-        box.style.setProperty('transform', 'translate(-50%, -50%)', 'important');
-        box.style.setProperty('width', '420px', 'important');
-        box.style.setProperty('max-width', '90%', 'important');
-        box.style.setProperty('padding', '35px 30px 25px 30px', 'important');
-    }
-}
-
 function handleGlobalClick(e) {
     let target = e.target;
     
+    // КЛИК ПО ТЕМНОМУ ФОНУ ВОКРУГ ОКНА
     if (target.id === "custom-beta-overlay" || target.id === "custom-feedback-overlay") {
+        // Мышка на ПК закрывает всегда
         if (e.type !== "touchstart") {
             e.preventDefault(); e.stopPropagation(); closeAllCustomPopups(); return;
         }
+        // Палец на телефоне закроет экран успеха ТОЛЬКО если форма уже отправлена
         if (target.id === "custom-beta-overlay" && isBetaSent) {
             e.preventDefault(); e.stopPropagation(); closeAllCustomPopups(); return;
         }
@@ -535,6 +476,7 @@ function handleGlobalClick(e) {
         return; 
     }
 
+    // КЛИК ПО КРЕСТИКУ
     if (target.className === "close-popup-btn") {
         e.preventDefault(); e.stopPropagation(); closeAllCustomPopups(); return;
     }
@@ -573,7 +515,6 @@ function openBetaWindow() {
         <button id="beta-submit-btn" onclick="sendBetaDataToGoogle()">Submit</button>
     `;
     document.getElementById('custom-beta-overlay').style.display = 'flex'; 
-    applySmartResponsiveStyles('custom-beta-overlay');
 }
 
 function openFeedbackWindow() { 
@@ -586,7 +527,6 @@ function openFeedbackWindow() {
         <button id="feedback-submit-btn" onclick="sendFeedbackDataToGoogle()">Send Feedback</button>
     `;
     document.getElementById('custom-feedback-overlay').style.display = 'flex'; 
-    applySmartResponsiveStyles('custom-feedback-overlay');
 }
 
 function closeAllCustomPopups() {
@@ -609,9 +549,9 @@ function sendBetaDataToGoogle() {
             <div style="text-align:center; padding:20px 10px;">
                 <h3 style="color:green; margin-top:0; font-size:24px;">✨ Successfully Sent!</h3>
                 <p style="font-size:15px; opacity:0.8; margin-bottom:0;">We will contact you shortly.</p>
+                <p style="font-size:12px; opacity:0.3; margin-top:20px;">(Tap anywhere to close)</p>
             </div>`;
-        applySmartResponsiveStyles('custom-beta-overlay');
-        setTimeout(closeAllCustomPopups, 3000);
+        setTimeout(closeAllCustomPopups, 3000); // Закрываем сами через 3 секунды
     })
     .catch(() => { 
         isBetaSent = true;
@@ -619,8 +559,8 @@ function sendBetaDataToGoogle() {
             <div style="text-align:center; padding:20px 10px;">
                 <h3 style="color:green; margin-top:0; font-size:24px;">✨ Successfully Sent!</h3>
                 <p style="font-size:15px; opacity:0.8; margin-bottom:0;">We will contact you shortly.</p>
+                <p style="font-size:12px; opacity:0.3; margin-top:20px;">(Tap anywhere to close)</p>
             </div>`;
-        applySmartResponsiveStyles('custom-beta-overlay');
         setTimeout(closeAllCustomPopups, 3000);
     });
 }
@@ -638,8 +578,8 @@ function sendFeedbackDataToGoogle() {
             <div style="text-align:center; padding:20px 10px;">
                 <h3 style="color:green; margin-top:0; font-size:24px;">✨ Thank you!</h3>
                 <p style="font-size:15px; opacity:0.8; margin-bottom:0;">Your thoughts have been saved successfully.</p>
+                <p style="font-size:12px; opacity:0.3; margin-top:20px;">(Tap anywhere to close)</p>
             </div>`;
-        applySmartResponsiveStyles('custom-feedback-overlay');
         setTimeout(closeAllCustomPopups, 3000);
     })
     .catch(() => {
@@ -648,8 +588,8 @@ function sendFeedbackDataToGoogle() {
             <div style="text-align:center; padding:20px 10px;">
                 <h3 style="color:green; margin-top:0; font-size:24px;">✨ Thank you!</h3>
                 <p style="font-size:15px; opacity:0.8; margin-bottom:0;">Your thoughts have been saved successfully.</p>
+                <p style="font-size:12px; opacity:0.3; margin-top:20px;">(Tap anywhere to close)</p>
             </div>`;
-        applySmartResponsiveStyles('custom-feedback-overlay');
         setTimeout(closeAllCustomPopups, 3000);
     });
 }
