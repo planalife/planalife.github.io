@@ -470,20 +470,24 @@ const googleScriptUrl = "https://script.google.com/macros/s/AKfycbzCJj2ZgkSxwoLY
 let activeBetaType = "Beta"; 
 
 // Функция для мгновенной проверки кликов и касаний
+// Функция для мгновенной проверки кликов (ЗАКРЫТИЕ ПО ФОНУ СРАБОТАЕТ НА 100%)
 function handleGlobalClick(e) {
     let target = e.target;
     
-    // ХИТРОСТЬ: Если пользователь кликнул прямо по нашему темному фону (вне розовой плашки)
-    if (target.id === "custom-beta-overlay") {
+    // Если кликнули точно по нашему темному фону вокруг розового окошка
+    if (target.id === "custom-beta-overlay" || target.id === "custom-feedback-overlay" || target.className === "close-popup-btn") {
         e.preventDefault(); e.stopPropagation();
-        closeBetaWindow();
+        
+        // Намертво закрываем и прячем абсолютно всё
+        document.getElementById('custom-beta-overlay').style.display = 'none';
+        document.getElementById('custom-feedback-overlay').style.display = 'none';
+        
+        // Вызываем Esc — Фреймер послушно закроет свой темный занавес
+        const escEvent = new KeyboardEvent('keydown', { key: 'Escape', keyCode: 27, code: 'Escape', which: 27, bubbles: true, cancelable: true });
+        document.dispatchEvent(escEvent);
         return;
     }
-    if (target.id === "custom-feedback-overlay") {
-        e.preventDefault(); e.stopPropagation();
-        closeFeedbackWindow();
-        return;
-    }
+
 
     // Проверяем элементы для открытия окон (кнопки)
     while (target && target !== document.body) {
