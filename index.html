@@ -397,22 +397,19 @@ function selectLangAction(langCode, manualUrl) {
 </script>
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 <!-- ======================================================== -->
-<!-- ИСПРАВЛЕННЫЙ ЦЕЛЬНЫЙ БЛОК ДЛЯ БЕТА-ТЕСТА И ОТЗЫВОВ -->
+<!-- ИСПРАВЛЕННЫЙ ЦЕЛЬНЫЙ БЛОК (СЛЭШИ УДАЛЕНЫ, ЗАКРЫТИЕ ПОЧИНЕНО) -->
 
-<!-- СТИЛИ ОКЕН (Цвета сохранены, добавлена идеальная адаптивность) -->
 <style>
   #custom-beta-overlay, #custom-feedback-overlay {
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(5px); z-index: 9999999;
-    align-items: center; justify-content: center; opacity: 0; transition: opacity 0.25s ease;
+    z-index: 9999999; align-items: center; justify-content: center; pointer-events: none;
   }
   .custom-popup-box {
-    background: #FFF5F5 !important; 
-    color: #4A2C22 !important; 
+    background: #FFF5F5 !important; color: #4A2C22 !important;
     padding: 35px 30px 30px 30px; border-radius: 16px; width: 420px; max-width: 90%;
-    box-shadow: 0 12px 40px rgba(143, 33, 0, 0.2); text-align: center;
+    box-shadow: 0 12px 40px rgba(143, 33, 0, 0.25); text-align: center;
     font-family: -apple-system, BlinkMacSystemFont, sans-serif; position: relative;
-    box-sizing: border-box; border: 1px solid rgba(143, 33, 0, 0.1);
+    box-sizing: border-box; border: 1px solid rgba(143, 33, 0, 0.1); pointer-events: auto;
   }
   .custom-popup-box input {
     width: 100% !important; padding: 12px !important; border: 1px solid rgba(143,33,0,0.2) !important;
@@ -420,8 +417,7 @@ function selectLangAction(langCode, manualUrl) {
     background: #ffffff !important; color: #000000 !important; font-size: 16px !important;
   }
   .custom-popup-box button {
-    width: 100% !important; padding: 12px !important; 
-    background: #8F2100 !important; 
+    width: 100% !important; padding: 12px !important; background: #8F2100 !important; 
     color: #ffffff !important; border: none !important; border-radius: 8px !important;
     font-weight: bold !important; cursor: pointer !important; font-family: inherit;
   }
@@ -430,9 +426,8 @@ function selectLangAction(langCode, manualUrl) {
     width: 28px !important; height: 28px !important; min-width: 28px !important; max-width: 28px !important;
     background: rgba(143, 33, 0, 0.08) !important; border: none !important; border-radius: 50% !important;
     font-size: 18px !important; line-height: 26px !important; cursor: pointer !important; 
-    color: #8F2100 !important; padding: 0 !important; 
-    display: flex !important; align-items: center; justify-content: center;
-    z-index: 10000000 !important;
+    color: #8F2100 !important; padding: 0 !important; display: flex !important; 
+    align-items: center; justify-content: center; z-index: 10000000 !important;
   }
   .close-popup-btn:hover { background: rgba(143, 33, 0, 0.15) !important; }
 </style>
@@ -457,97 +452,48 @@ function selectLangAction(langCode, manualUrl) {
     </div>
 </div>
 
-<!-- ЕДИНЫЙ СКРИПТ УПРАВЛЕНИЯ КЛИКАМИ -->
 <script type="text/javascript">
 document.addEventListener("DOMContentLoaded", function() {
     setTimeout(function() {
         const elements = document.getElementsByTagName('*');
         for (let el of elements) {
             const text = el.textContent.trim();
-            
-            // Кнопки бета-теста (Android / iOS)
             if (text === "Android" || text === "iOS") {
                 el.style.cursor = "pointer";
-                el.onclick = function(e) {
-                    e.preventDefault(); e.stopPropagation();
-                    openBetaWindow();
-                };
+                el.onclick = function(e) { openBetaWindow(); };
             }
-
-            // Кнопка Обратной связи
             if (text === "Share Your Thoughts") {
                 el.style.cursor = "pointer";
-                el.onclick = function(e) {
-                    e.preventDefault(); e.stopPropagation();
-                    openFeedbackWindow();
-                };
+                el.onclick = function(e) { openFeedbackWindow(); };
             }
         }
     }, 500);
 });
 
-function openBetaWindow() {
-    const overlay = document.getElementById('custom-beta-overlay');
-    overlay.style.display = 'flex';
-    setTimeout(() => { overlay.style.opacity = '1'; }, 10);
-}
+function openBetaWindow() { document.getElementById('custom-beta-overlay').style.display = 'flex'; }
+function openFeedbackWindow() { document.getElementById('custom-feedback-overlay').style.display = 'flex'; }
 
-// УЛУЧШЕННОЕ ЗАКРЫТИЕ: Скрипт сам находит и закрывает темный фон Framer
+// ИСПРАВЛЕННОЕ ЗАКРЫТИЕ ЧЕРЕЗ ИМИТАЦИЮ ESCAPE ДЛЯ ФРЕЙМЕРА
 function closeBetaWindow() {
-    const overlay = document.getElementById('custom-beta-overlay');
-    overlay.style.opacity = '0';
-    setTimeout(() => { 
-        overlay.style.display = 'none'; 
-        closeFramerNativeOverlay(); // Закрываем родной оверлей Framer
-    }, 250);
+    document.getElementById('custom-beta-overlay').style.display = 'none';
+    const escEvent = new KeyboardEvent('keydown', { key: 'Escape', keyCode: 27, code: 'Escape', which: 27, bubbles: true, cancelable: true });
+    document.dispatchEvent(escEvent);
 }
 
-function openFeedbackWindow() {
-    const overlay = document.getElementById('custom-feedback-overlay');
-    overlay.style.display = 'flex';
-    setTimeout(() => { overlay.style.opacity = '1'; }, 10);
-}
-
-// УЛУЧШЕННОЕ ЗАКРЫТИЕ: Скрипт сам находит и закрывает темный фон Framer
 function closeFeedbackWindow() {
-    const overlay = document.getElementById('custom-feedback-overlay');
-    overlay.style.opacity = '0';
-    setTimeout(() => { 
-        overlay.style.display = 'none'; 
-        closeFramerNativeOverlay(); // Закрываем родной оверлей Framer
-    }, 250);
+    document.getElementById('custom-feedback-overlay').style.display = 'none';
+    const escEvent = new KeyboardEvent('keydown', { key: 'Escape', keyCode: 27, code: 'Escape', which: 27, bubbles: true, cancelable: true });
+    document.dispatchEvent(escEvent);
 }
 
-// Функция, которая находит скрытый оверлей Framer и кликает по нему для полного закрытия страницы
-function closeFramerNativeOverlay() {
-    // Сканируем все элементы на сайте, которые создают темные фоны во Framer
-    const overlays = document.querySelectorAll('[data-framer-overlay], [class*="overlay"], [id*="overlay"]');
-    if (overlays.length > 0) {
-        overlays.forEach(ov => {
-            if (window.getComputedStyle(ov).display !== 'none') {
-                ov.click(); // Симулируем клик по фону Framer
-            }
-        });
-    }
-    // Если Framer использует стандартный клик по body для закрытия окон
-    document.body.click(); 
-}
-
-// Отправка email в Google Таблицу
 function sendDataToGoogleSheets() {
     const emailInput = document.getElementById('tester-email');
     if (!emailInput || !emailInput.value) { alert("Please enter a valid email"); return; }
-
     const btn = document.getElementById('beta-submit-btn');
     btn.disabled = true; btn.textContent = "Sending...";
-
     const googleScriptUrl = "https://google.com";
 
-    fetch(googleScriptUrl, {
-        method: 'POST', mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: emailInput.value })
-    })
+    fetch(googleScriptUrl, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: emailInput.value }) })
     .then(() => {
         document.querySelector('#custom-beta-overlay .custom-popup-box').innerHTML = `
             <button class="close-popup-btn" onclick="closeBetaWindow()">&times;</button>
@@ -556,16 +502,14 @@ function sendDataToGoogleSheets() {
                 <p style="font-size:14px; opacity:0.8;">We will contact you shortly.</p>
             </div>`;
     })
-    .catch(err => {
-        console.error(err);
-        alert("Error sending. Please try again.");
-        btn.disabled = false; btn.textContent = "Submit";
-    });
+    .catch(err => { console.error(err); alert("Error sending. Please try again."); btn.disabled = false; btn.textContent = "Submit"; });
 }
 </script>
 
-<!-- КОНЕЦ ЦЕЛЬНОГО БЛОКА ДЛЯ ВСЕХ КНОПОК -->
-<!-- ======================================================== -->
+<!-- ТЕПЕРЬ СЛЕДУЮТ СТРОГИЕ ЗАКРЫВАЮЩИЕ ТЕГИ ФАЙЛА, КОТОРЫХ НЕ ХВАТАЛО -->
+</body>
+</html>
+
 
 //<script type="text/plain" id="framerexporter-badge-bootstrap">(function(){var BADGE_HTML="<a class=\"framerexporter-badge\" href=\"https://framerexporter.com\" target=\"_blank\" rel=\"noopener\" title=\"Exported with FramerExporter\" style=\"position:fixed;right:20px;bottom:20px;z-index:2147483647;display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:10px;background:#ffffff;color:#111111;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Inter',sans-serif;font-size:11px;line-height:1.3;text-decoration:none;box-shadow:rgba(0,0,0,0.26) 0px 0.64px 1.15px -1.13px, rgba(0,0,0,0.24) 0px 1.93px 3.48px -2.25px, rgba(0,0,0,0.19) 0px 5.11px 9.19px -3.38px, rgba(0,0,0,0.03) 0px 16px 28.8px -4.5px;\"><img src=\"data:image/svg+xml,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0A%3Csvg%20id%3D%22Layer_1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20version%3D%221.1%22%20viewBox%3D%220%200%20234%20234%22%3E%0A%20%20%3C!--%20Generator%3A%20Adobe%20Illustrator%2029.0.1%2C%20SVG%20Export%20Plug-In%20.%20SVG%20Version%3A%202.1.0%20Build%20192)%20%20--%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3Cstyle%3E%0A%20%20%20%20%20%20.st0%20%7B%0A%20%20%20%20%20%20%20%20fill%3A%20%2365758b%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%3C%2Fstyle%3E%0A%20%20%3C%2Fdefs%3E%0A%20%20%3Cpath%20class%3D%22st0%22%20d%3D%22M225%2C11.33h-72c-39.76%2C0-72%2C32.24-72%2C72h0L9%2C155.33h72v72l72-72v-72c0%2C39.76%2C32.24%2C72%2C72%2C72v-72h-72L225%2C11.33Z%22%2F%3E%0A%3C%2Fsvg%3E\" alt=\"FramerExporter\" style=\"width:14px;height:14px;display:block;\" /><span style=\"font-weight:600;letter-spacing:-0.02em;\">FramerExporter</span></a>";function ensureBadge(){if(!document.body)return;var existing=document.querySelector(".framerexporter-badge");if(existing)return;var container=document.createElement("div");container.innerHTML=BADGE_HTML;var el=container.firstElementChild;if(el)document.body.appendChild(el);}if(document.readyState==="complete"||document.readyState==="interactive"){ensureBadge();}else{window.addEventListener("DOMContentLoaded",ensureBadge);}var tries=0;var interval=setInterval(function(){tries++;ensureBadge();if(tries>10)clearInterval(interval);},1000);}());</script>
 </body></html>
