@@ -455,19 +455,41 @@ function selectLangAction(langCode, manualUrl) {
     </div>
 </div>
 
+<!--/////////////////////////////////////////////////////////////////////////////////////-->	
+
 <script type="text/javascript">
 // ВАША ЕДИНАЯ ССЫЛКА ИЗ GOOGLE ТАБЛИЦ (Я взял её прямо из вашего iframe!)
 const googleScriptUrl = "https://script.google.com/macros/s/AKfycbzCJj2ZgkSxwoLYIJWvRdA9rP6u42rXIEwSanNL1uJXeYWKeAydVlS4lnVkyRMhf8p1/exec";
+
+
+// Переменная, чтобы скрипт помнил, какую именно кнопку нажал пользователь
+let activeBetaType = "Beta"; 
 
 document.addEventListener("DOMContentLoaded", function() {
     setTimeout(function() {
         const elements = document.getElementsByTagName('*');
         for (let el of elements) {
             const text = el.textContent.trim();
-            if (text === "Android" || text === "iOS") {
+            
+            // Если нажали Android — запоминаем тип и открываем окно
+            if (text === "Android") {
                 el.style.cursor = "pointer";
-                el.onclick = function(e) { openBetaWindow(); };
+                el.onclick = function(e) { 
+                    activeBetaType = "Android Beta"; 
+                    openBetaWindow(); 
+                };
             }
+            
+            // Если нажали iOS — запоминаем тип и открываем окно
+            if (text === "iOS") {
+                el.style.cursor = "pointer";
+                el.onclick = function(e) { 
+                    activeBetaType = "iOS Beta"; 
+                    openBetaWindow(); 
+                };
+            }
+            
+            // Кнопка отзывов
             if (text === "Share Your Thoughts") {
                 el.style.cursor = "pointer";
                 el.onclick = function(e) { openFeedbackWindow(); };
@@ -481,24 +503,22 @@ function openFeedbackWindow() { document.getElementById('custom-feedback-overlay
 
 function closeBetaWindow() {
     document.getElementById('custom-beta-overlay').style.display = 'none';
-    const escEvent = new KeyboardEvent('keydown', { key: 'Escape', keyCode: 27, code: 'Escape', which: 27, bubbles: true, cancelable: true });
-    document.dispatchEvent(escEvent);
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', keyCode: 27, code: 'Escape', which: 27, bubbles: true, cancelable: true }));
 }
 
 function closeFeedbackWindow() {
     document.getElementById('custom-feedback-overlay').style.display = 'none';
-    const escEvent = new KeyboardEvent('keydown', { key: 'Escape', keyCode: 27, code: 'Escape', which: 27, bubbles: true, cancelable: true });
-    document.dispatchEvent(escEvent);
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', keyCode: 27, code: 'Escape', which: 27, bubbles: true, cancelable: true }));
 }
 
-// Отправка EMAIL для беты (Исправлено на метод GET)
+// Отправка EMAIL для беты (Передает точный тип: Android Beta или iOS Beta)
 function sendBetaDataToGoogle() {
     const emailInput = document.getElementById('tester-email');
     if (!emailInput || !emailInput.value) { alert("Please enter a valid email"); return; }
     const btn = document.getElementById('beta-submit-btn');
     btn.disabled = true; btn.textContent = "Sending...";
 
-    fetch(googleScriptUrl + "?email=" + encodeURIComponent(emailInput.value) + "&type=Beta", { method: 'GET' })
+    fetch(googleScriptUrl + "?email=" + encodeURIComponent(emailInput.value) + "&type=" + encodeURIComponent(activeBetaType), { method: 'GET' })
     .then(() => {
         document.querySelector('#custom-beta-overlay .custom-popup-box').innerHTML = `
             <button class="close-popup-btn" onclick="closeBetaWindow()">&times;</button>
@@ -517,7 +537,7 @@ function sendBetaDataToGoogle() {
     });
 }
 
-// Отправка ОТЗЫВА для обратной связи (Исправлено на метод GET)
+// Отправка ОТЗЫВА (Передает тип Feedback)
 function sendFeedbackDataToGoogle() {
     const msgInput = document.getElementById('feedback-message');
     if (!msgInput || !msgInput.value.trim()) { alert("Please type your feedback message"); return; }
@@ -544,10 +564,11 @@ function sendFeedbackDataToGoogle() {
 }
 </script>
 
+
 	
 </body>
 </html>
 
-
+_____
 
 
