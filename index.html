@@ -449,7 +449,7 @@ function selectLangAction(langCode, manualUrl) {
 
 <!-- ******************************************************** -->
 <!-- ******************************************************** -->
-<!-- ЧАСТЬ 2: СКРИПТ С АВТОЗАКРЫТИЕМ И РАЗДЕЛЬНЫМИ КЛИКАМИ -->
+<!-- ЧАСТЬ 2: СКРИПТ, НАСТРОЕННЫЙ СТРОГО НА НИЖНИЕ КНОПКИ БЕТЫ И ОТЗЫВОВ -->
 <script type="text/javascript">
 const googleScriptUrl = "https://google.com";
 let activeBetaType = "Beta"; 
@@ -462,11 +462,9 @@ function handleGlobalClick(e) {
     
     // КЛИК ПО ТЕМНОМУ ФОНУ ВОКРУГ ОКНА
     if (target.id === "custom-beta-overlay" || target.id === "custom-feedback-overlay") {
-        // Мышка на ПК закрывает всегда
         if (e.type !== "touchstart") {
             e.preventDefault(); e.stopPropagation(); closeAllCustomPopups(); return;
         }
-        // Палец на телефоне закроет экран успеха ТОЛЬКО если форма уже отправлена
         if (target.id === "custom-beta-overlay" && isBetaSent) {
             e.preventDefault(); e.stopPropagation(); closeAllCustomPopups(); return;
         }
@@ -483,16 +481,27 @@ function handleGlobalClick(e) {
 
     while (target && target !== document.body) {
         if (target.textContent) {
+            // Очищаем текст от скрытых мобильных пробелов и переносов
             const text = target.textContent.replace(/\s+/g, ' ').trim();
             
-            if (text === "Android" || text === "Get it on Google Play") {
+            // ЗАЩИТА: Если человек кликнул на верхние кнопки магазинов — полностью ИГНОРИРУЕМ их в коде!
+            if (text.includes("App Store") || text.includes("Google Play")) {
+                return; // Скрипт мгновенно засыпает и отдает управление Фреймеру
+            }
+            
+            // 1. НИЖНЯЯ КНОПКА БЕТЫ ДЛЯ ANDROID
+            if (text === "Android") {
                 e.preventDefault(); e.stopPropagation();
                 activeBetaType = "Android Beta"; openBetaWindow(); return;
             }
-            if (text === "iOS" || text === "Apple" || text === "Download on App Store") {
+            
+            // 2. НИЖНЯЯ КНОПКА БЕТЫ ДЛЯ iOS
+            if (text === "iOS") {
                 e.preventDefault(); e.stopPropagation();
                 activeBetaType = "iOS Beta"; openBetaWindow(); return;
             }
+            
+            // 3. КНОПКА ОТЗЫВОВ ВНИЗУ
             if (text === "Share Your Thoughts") {
                 e.preventDefault(); e.stopPropagation();
                 openFeedbackWindow(); return;
@@ -551,7 +560,7 @@ function sendBetaDataToGoogle() {
                 <p style="font-size:15px; opacity:0.8; margin-bottom:0;">We will contact you shortly.</p>
                 <p style="font-size:12px; opacity:0.3; margin-top:20px;">(Tap anywhere to close)</p>
             </div>`;
-        setTimeout(closeAllCustomPopups, 3000); // Закрываем сами через 3 секунды
+        setTimeout(closeAllCustomPopups, 3000); 
     })
     .catch(() => { 
         isBetaSent = true;
