@@ -480,20 +480,21 @@ function closeBetaWindow() {
     document.dispatchEvent(escEvent);
 }
 
-function closeFeedbackWindow() {
-    document.getElementById('custom-feedback-overlay').style.display = 'none';
-    const escEvent = new KeyboardEvent('keydown', { key: 'Escape', keyCode: 27, code: 'Escape', which: 27, bubbles: true, cancelable: true });
-    document.dispatchEvent(escEvent);
-}
-
+// Исправленная функция отправки email в Google Таблицу
 function sendDataToGoogleSheets() {
     const emailInput = document.getElementById('tester-email');
     if (!emailInput || !emailInput.value) { alert("Please enter a valid email"); return; }
+
     const btn = document.getElementById('beta-submit-btn');
     btn.disabled = true; btn.textContent = "Sending...";
+
+    // Ваша ссылка /exec (убедитесь, что она указана верно)
     const googleScriptUrl = "https://google.com";
 
-    fetch(googleScriptUrl, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: emailInput.value }) })
+    // Передаем данные через URL-параметры (это обходит 100% блокировок CORS браузера)
+    fetch(googleScriptUrl + "?email=" + encodeURIComponent(emailInput.value) + "&type=Beta", {
+        method: 'POST'
+    })
     .then(() => {
         document.querySelector('#custom-beta-overlay .custom-popup-box').innerHTML = `
             <button class="close-popup-btn" onclick="closeBetaWindow()">&times;</button>
@@ -502,8 +503,13 @@ function sendDataToGoogleSheets() {
                 <p style="font-size:14px; opacity:0.8;">We will contact you shortly.</p>
             </div>`;
     })
-    .catch(err => { console.error(err); alert("Error sending. Please try again."); btn.disabled = false; btn.textContent = "Submit"; });
+    .catch(err => {
+        console.error(err);
+        alert("Error sending. Please try again.");
+        btn.disabled = false; btn.textContent = "Submit";
+    });
 }
+
 </script>
 
 <!-- ТЕПЕРЬ СЛЕДУЮТ СТРОГИЕ ЗАКРЫВАЮЩИЕ ТЕГИ ФАЙЛА, КОТОРЫХ НЕ ХВАТАЛО -->
