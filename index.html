@@ -398,7 +398,7 @@ function selectLangAction(langCode, manualUrl) {
 <!--/////////////////////////////////////////////////////////////////////////////////////-->
 <!-- ======================================================== -->
 <!-- ******************************************************** -->
-<!-- ЧАСТЬ 1: УЛУЧШЕННЫЕ СТИЛИ (НАВЕРХУ И НА ВЕСЬ ЭКРАН ДЛЯ ТЕЛЕФОНОВ) -->
+<!-- ЧАСТЬ 1: ЧИСТЫЕ СТИЛИ ДЛЯ ОКЕН (БЕЗ МЕДИА-ЗАПРОСОВ) -->
 <style>
   #custom-beta-overlay, #custom-feedback-overlay {
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -406,31 +406,15 @@ function selectLangAction(langCode, manualUrl) {
     pointer-events: auto;
   }
   
-  /* БАЗОВЫЙ СТИЛЬ ДЛЯ КОМПЬЮТЕРОВ (По центру) */
+  /* Базовый красивый стиль плашки */
   .custom-popup-box {
-    position: fixed !important; 
-    top: 50% !important; 
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
+    position: fixed !important;
     background: #FFF5F5 !important; color: #4A2C22 !important;
-    padding: 35px 25px 25px 25px; border-radius: 16px; 
-    width: 420px !important; 
+    border-radius: 16px; 
     box-shadow: 0 12px 40px rgba(143, 33, 0, 0.25); text-align: center;
     font-family: -apple-system, BlinkMacSystemFont, sans-serif;
     box-sizing: border-box !important; border: 1px solid rgba(143, 33, 0, 0.1); 
     pointer-events: auto;
-  }
-
-  /* ЖЕЛЕЗОБЕТОННЫЙ СТИЛЬ ДЛЯ МОБИЛЬНЫХ ТЕЛЕФОНОВ (Срабатывает на смартфонах) */
-  @media screen and (max-width: 768px) {
-    .custom-popup-box {
-      top: 15px !important; /* Прижимаем к самому верху экрана, спасая от клавиатуры! */
-      left: 5% !important;
-      transform: translate(0, 0) !important; /* Сбрасываем центрирование, чтобы закрепить наверху */
-      width: 90vw !important; /* Жестко заставляем плашку занять 90% физической ширины экрана телефона! */
-      max-width: 90vw !important;
-      padding: 30px 20px 20px 20px;
-    }
   }
   
   .custom-popup-box input, .custom-popup-box textarea {
@@ -459,30 +443,19 @@ function selectLangAction(langCode, manualUrl) {
 <!-- ОКНО БЕТА-ТЕСТА -->
 <div id="custom-beta-overlay">
     <div class="custom-popup-box">
-        <button class="close-popup-btn" onclick="closeAllCustomPopups()">&times;</button>
-        <h3 style="margin-top:5px; margin-bottom:10px; font-size:22px; color:inherit;">Join Beta Test</h3>
-        <p style="opacity:0.7; font-size:14px; margin-bottom:20px; color:inherit;">Enter your e-mail to receive an invitation.</p>
-        <input type="email" id="tester-email" placeholder="name@example.com">
-        <button id="beta-submit-btn" onclick="sendBetaDataToGoogle()">Submit</button>
+        <!-- Скрипт сам добавит сюда контент -->
     </div>
 </div>
 
 <!-- ОКНО ОБРАТНОЙ СВЯЗИ -->
 <div id="custom-feedback-overlay">
     <div class="custom-popup-box">
-        <button class="close-popup-btn" onclick="closeAllCustomPopups()">&times;</button>
-        <h3 style="margin-top:0; margin-bottom:10px; font-size:22px; color:inherit;">Share Your Thoughts</h3>
-        <p style="opacity:0.7; font-size:14px; margin-bottom:20px; color:inherit;">We would love to hear your feedback or ideas!</p>
-        <textarea id="feedback-message" placeholder="Type your wishes or review here..."></textarea>
-        <button id="feedback-submit-btn" onclick="sendFeedbackDataToGoogle()">Send Feedback</button>
+        <!-- Скрипт сам добавит сюда контент -->
     </div>
 </div>
 <!-- КОНЕЦ ЧАСТИ 1 -->
-<!-- ******************************************************** -->
+<!-- ******************************************************** -->	
 
-	
-<!-- ******************************************************** -->
-	
 <!-- ******************************************************** -->
 <!-- ФИНАЛЬНАЯ ЧАСТЬ 2: УМНЫЙ СКРИПТ С АВТОЗАКРЫТИЕМ ОКНА -->
 <script type="text/javascript">
