@@ -457,45 +457,61 @@ function selectLangAction(langCode, manualUrl) {
 <!-- ******************************************************** -->	
 
 <!-- ******************************************************** -->
-<!-- ФИНАЛЬНАЯ ЧАСТЬ 2: УМНЫЙ СКРИПТ С АВТОЗАКРЫТИЕМ ОКНА -->
+<!-- ФИНАЛЬНАЯ ЧАСТЬ 2: СКРИПТ УПРАВЛЕНИЯ РАЗМЕРАМИ И КЛИКАМИ -->
 <script type="text/javascript">
-const googleScriptUrl = "https://script.google.com/macros/s/AKfycbzCJj2ZgkSxwoLYIJWvRdA9rP6u42rXIEwSanNL1uJXeYWKeAydVlS4lnVkyRMhf8p1/exec";
+const googleScriptUrl = "https://google.com";
 let activeBetaType = "Beta"; 
 
 let isBetaSent = false;
 let isFeedbackSent = false;
 
+// Умная функция: определяет, телефон перед нами или компьютер, и задает жесткие стили
+function applySmartResponsiveStyles(overlayId) {
+    const box = document.querySelector('#' + overlayId + ' .custom-popup-box');
+    if (!box) return;
+
+    // ХИТРОСТЬ: Проверяем реальную ширину экрана устройства в пикселях
+    const realWidth = window.innerWidth || document.documentElement.clientWidth;
+
+    if (realWidth < 768 || navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/iPhone/i)) {
+        // НАСТРОЙКИ ДЛЯ СМАРТФОНОВ: Крупная плашка наверху, спасающая от клавиатуры!
+        box.style.setProperty('top', '15px', 'important');
+        box.style.setProperty('left', '15px', 'important');
+        box.style.setProperty('transform', 'none', 'important');
+        box.style.setProperty('width', 'calc(100vw - 30px)', 'important');
+        box.style.setProperty('max-width', 'calc(100vw - 30px)', 'important');
+        box.style.setProperty('padding', '30px 15px 20px 15px', 'important');
+    } else {
+        // НАСТРОЙКИ ДЛЯ КОМПЬЮТЕРОВ: Строго по центру экрана
+        box.style.setProperty('top', '50%', 'important');
+        box.style.setProperty('left', '50%', 'important');
+        box.style.setProperty('transform', 'translate(-50%, -50%)', 'important');
+        box.style.setProperty('width', '420px', 'important');
+        box.style.setProperty('max-width', '90%', 'important');
+        box.style.setProperty('padding', '35px 30px 25px 30px', 'important');
+    }
+}
+
 function handleGlobalClick(e) {
     let target = e.target;
     
-    // 1. ОПРЕДЕЛЯЕМ КЛИК ПО ТЕМНОМУ ФОНУ ВОКРУГ ОКНА
     if (target.id === "custom-beta-overlay" || target.id === "custom-feedback-overlay") {
         if (e.type !== "touchstart") {
-            e.preventDefault(); e.stopPropagation();
-            closeAllCustomPopups();
-            return;
+            e.preventDefault(); e.stopPropagation(); closeAllCustomPopups(); return;
         }
         if (target.id === "custom-beta-overlay" && isBetaSent) {
-            e.preventDefault(); e.stopPropagation();
-            closeAllCustomPopups();
-            return;
+            e.preventDefault(); e.stopPropagation(); closeAllCustomPopups(); return;
         }
         if (target.id === "custom-feedback-overlay" && isFeedbackSent) {
-            e.preventDefault(); e.stopPropagation();
-            closeAllCustomPopups();
-            return;
+            e.preventDefault(); e.stopPropagation(); closeAllCustomPopups(); return;
         }
         return; 
     }
 
-    // 2. КЛИК ПО КРЕСТИКУ
     if (target.className === "close-popup-btn") {
-        e.preventDefault(); e.stopPropagation();
-        closeAllCustomPopups();
-        return;
+        e.preventDefault(); e.stopPropagation(); closeAllCustomPopups(); return;
     }
 
-    // Проверяем элементы для открытия окон (кнопки)
     while (target && target !== document.body) {
         if (target.textContent) {
             const text = target.textContent.replace(/\s+/g, ' ').trim();
@@ -530,6 +546,7 @@ function openBetaWindow() {
         <button id="beta-submit-btn" onclick="sendBetaDataToGoogle()">Submit</button>
     `;
     document.getElementById('custom-beta-overlay').style.display = 'flex'; 
+    applySmartResponsiveStyles('custom-beta-overlay'); // Принудительно выставляем размеры
 }
 
 function openFeedbackWindow() { 
@@ -542,6 +559,7 @@ function openFeedbackWindow() {
         <button id="feedback-submit-btn" onclick="sendFeedbackDataToGoogle()">Send Feedback</button>
     `;
     document.getElementById('custom-feedback-overlay').style.display = 'flex'; 
+    applySmartResponsiveStyles('custom-feedback-overlay'); // Принудительно выставляем размеры
 }
 
 function closeAllCustomPopups() {
@@ -565,7 +583,7 @@ function sendBetaDataToGoogle() {
                 <h3 style="color:green; margin-top:0; font-size:24px;">✨ Successfully Sent!</h3>
                 <p style="font-size:15px; opacity:0.8; margin-bottom:0;">We will contact you shortly.</p>
             </div>`;
-        // МАГИЯ: Автоматически закрываем окно ровно через 3 секунды
+        applySmartResponsiveStyles('custom-beta-overlay'); // Удерживаем верстку
         setTimeout(closeAllCustomPopups, 3000);
     })
     .catch(() => { 
@@ -575,6 +593,7 @@ function sendBetaDataToGoogle() {
                 <h3 style="color:green; margin-top:0; font-size:24px;">✨ Successfully Sent!</h3>
                 <p style="font-size:15px; opacity:0.8; margin-bottom:0;">We will contact you shortly.</p>
             </div>`;
+        applySmartResponsiveStyles('custom-beta-overlay');
         setTimeout(closeAllCustomPopups, 3000);
     });
 }
@@ -593,7 +612,7 @@ function sendFeedbackDataToGoogle() {
                 <h3 style="color:green; margin-top:0; font-size:24px;">✨ Thank you!</h3>
                 <p style="font-size:15px; opacity:0.8; margin-bottom:0;">Your thoughts have been saved successfully.</p>
             </div>`;
-        // МАГИЯ: Автоматически закрываем окно ровно через 3 секунды
+        applySmartResponsiveStyles('custom-feedback-overlay'); // Удерживаем верстку
         setTimeout(closeAllCustomPopups, 3000);
     })
     .catch(() => {
@@ -603,6 +622,7 @@ function sendFeedbackDataToGoogle() {
                 <h3 style="color:green; margin-top:0; font-size:24px;">✨ Thank you!</h3>
                 <p style="font-size:15px; opacity:0.8; margin-bottom:0;">Your thoughts have been saved successfully.</p>
             </div>`;
+        applySmartResponsiveStyles('custom-feedback-overlay');
         setTimeout(closeAllCustomPopups, 3000);
     });
 }
