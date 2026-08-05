@@ -476,38 +476,40 @@ const googleScriptUrl = "https://script.google.com/macros/s/AKfycbzCJj2ZgkSxwoLY
 // Переменная, чтобы скрипт помнил, какую именно кнопку нажал пользователь
 let activeBetaType = "Beta"; 
 
+// ЕДИНЫЙ СКРИПТ УПРАВЛЕНИЯ КЛИКАМИ (ИСПРАВЛЕНО ДЛЯ ТЕЛЕФОНОВ)
 document.addEventListener("DOMContentLoaded", function() {
     setTimeout(function() {
         const elements = document.getElementsByTagName('*');
         for (let el of elements) {
             const text = el.textContent.trim();
             
-            // Если нажали Android — запоминаем тип и открываем окно
-            if (text === "Android") {
+            // Проверяем, содержит ли элемент слово Android (сработает и на ПК, и на телефонах)
+            if (text.includes("Android")) {
                 el.style.cursor = "pointer";
                 el.onclick = function(e) { 
                     activeBetaType = "Android Beta"; 
                     openBetaWindow(); 
                 };
             }
-            
-            // Если нажали iOS — запоминаем тип и открываем окно
-            if (text === "iOS") {
+
+            // Проверяем, содержит ли элемент слово iOS или Apple
+            if (text.includes("iOS") || text.includes("Apple")) {
                 el.style.cursor = "pointer";
                 el.onclick = function(e) { 
                     activeBetaType = "iOS Beta"; 
                     openBetaWindow(); 
                 };
             }
-            
-            // Кнопка отзывов
-            if (text === "Share Your Thoughts") {
+
+            // Проверяем, содержит ли элемент фразу Share Your Thoughts
+            if (text.includes("Share Your Thoughts")) {
                 el.style.cursor = "pointer";
                 el.onclick = function(e) { openFeedbackWindow(); };
             }
         }
     }, 500);
 });
+
 
 function openBetaWindow() { document.getElementById('custom-beta-overlay').style.display = 'flex'; }
 function openFeedbackWindow() { document.getElementById('custom-feedback-overlay').style.display = 'flex'; }
