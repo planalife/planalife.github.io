@@ -406,12 +406,12 @@ function selectLangAction(langCode, manualUrl) {
 </script>
 <!--/////////////////////////////////////////////////////////////////////////////////////-->
 <!-- ******************************************************** -->
-<!-- ЧАСТЬ 1: ПРОВЕРЕННЫЕ СТИЛИ И ОКНА (РУЧНОЙ ЗУМ РАЗРЕШЕН) -->
+<!-- ЧАСТЬ 1: ФИНАЛЬНЫЕ СТИЛИ И ОКНА (ПОД ARIA ID И СБРОС ФОРМ) -->
 <style>
   #custom-beta-overlay, #custom-feedback-overlay {
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(5px); z-index: 9999999;
-    pointer-events: auto; /* Позволяет ловить клики по фону */
+    pointer-events: auto;
   }
   .custom-popup-box {
     position: fixed !important; top: 50% !important; left: 50% !important;
@@ -443,12 +443,12 @@ function selectLangAction(langCode, manualUrl) {
   }
 </style>
 
-<!-- ОКНО БЕТА-ТЕСТА -->
+<!-- ОКНО БЕТА-ТЕСТА (Открывается кнопками ios и android) -->
 <div id="custom-beta-overlay">
     <div class="custom-popup-box"></div>
 </div>
 
-<!-- ОКНО ОБРАТНОЙ СВЯЗИ -->
+<!-- ОКНО ОБРАТНОЙ СВЯЗИ (Открывается кнопкой feedback) -->
 <div id="custom-feedback-overlay">
     <div class="custom-popup-box"></div>
 </div>
@@ -456,11 +456,12 @@ function selectLangAction(langCode, manualUrl) {
 <!-- ******************************************************** -->
 
 
+
 <!-- ******************************************************** -->
 <!-- ******************************************************** -->
-<!-- ЧАСТЬ 2: СКРИПТ, НАСТРОЕННЫЙ СТРОГО НА НИЖНИЕ КНОПКИ БЕТЫ И ОТЗЫВОВ -->
+<!-- ЧАСТЬ 2: СВЕРХБЫСТРЫЙ СКРИПТ ПО ВАШИМ ARIA ID МЕТКАМ -->
 <script type="text/javascript">
-const googleScriptUrl = "https://script.google.com/macros/s/AKfycbzCJj2ZgkSxwoLYIJWvRdA9rP6u42rXIEwSanNL1uJXeYWKeAydVlS4lnVkyRMhf8p1/exec";
+const googleScriptUrl = "https://google.com";
 let activeBetaType = "Beta"; 
 
 let isBetaSent = false;
@@ -469,51 +470,55 @@ let isFeedbackSent = false;
 function handleGlobalClick(e) {
     let target = e.target;
     
-    // КЛИК ПО ТЕМНОМУ ФОНУ ВОКРУГ ОКНА
+    // 1. КЛИК И ТАП ПО ТЕМНОМУ ФОНУ ВОКРУГ ОКНА
     if (target.id === "custom-beta-overlay" || target.id === "custom-feedback-overlay") {
-        if (e.type !== "touchstart") {
-            e.preventDefault(); e.stopPropagation(); closeAllCustomPopups(); return;
-        }
-        if (target.id === "custom-beta-overlay" && isBetaSent) {
-            e.preventDefault(); e.stopPropagation(); closeAllCustomPopups(); return;
-        }
-        if (target.id === "custom-feedback-overlay" && isFeedbackSent) {
-            e.preventDefault(); e.stopPropagation(); closeAllCustomPopups(); return;
-        }
+        if (e.type !== "touchstart") { e.preventDefault(); e.stopPropagation(); closeAllCustomPopups(); return; }
+        if (target.id === "custom-beta-overlay" && isBetaSent) { e.preventDefault(); e.stopPropagation(); closeAllCustomPopups(); return; }
+        if (target.id === "custom-feedback-overlay" && isFeedbackSent) { e.preventDefault(); e.stopPropagation(); closeAllCustomPopups(); return; }
         return; 
     }
 
-    // КЛИК ПО КРЕСТИКУ
+    // 2. КЛИК ПО КРЕСТИКУ ЗАКРЫТИЯ
     if (target.className === "close-popup-btn") {
-        e.preventDefault(); e.stopPropagation(); closeAllCustomPopups(); return;
+        e.preventDefault(); e.stopPropagation();
+        closeAllCustomPopups();
+        return;
     }
 
+    // 3. МГНОВЕННЫЙ ПЕРЕХВАТ КНОПОК ПО ВАШИМ ARIA ID
     while (target && target !== document.body) {
-        if (target.textContent) {
-            // Очищаем текст от скрытых мобильных пробелов и переносов
-            const text = target.textContent.replace(/\s+/g, ' ').trim();
-            
-            // ЗАЩИТА: Если человек кликнул на верхние кнопки магазинов — полностью ИГНОРИРУЕМ их в коде!
-            if (text.includes("App Store") || text.includes("Google Play")) {
-                return; // Скрипт мгновенно засыпает и отдает управление Фреймеру
-            }
-            
-            // 1. НИЖНЯЯ КНОПКА БЕТЫ ДЛЯ ANDROID
-            if (text === "Android") {
+        if (target.getAttribute) {
+            const ariaId = target.getAttribute('id'); // Наш React-HOC превратил Aria Label в чистый HTML ID!
+
+            // Кнопка бета-теста Android
+            if (ariaId === "android") {
                 e.preventDefault(); e.stopPropagation();
                 activeBetaType = "Android Beta"; openBetaWindow(); return;
             }
-            
-            // 2. НИЖНЯЯ КНОПКА БЕТЫ ДЛЯ iOS
-            if (text === "iOS") {
+            // Кнопка бета-теста iOS
+            if (ariaId === "ios") {
                 e.preventDefault(); e.stopPropagation();
                 activeBetaType = "iOS Beta"; openBetaWindow(); return;
             }
-            
-            // 3. КНОПКА ОТЗЫВОВ ВНИЗУ
-            if (text === "Share Your Thoughts") {
+            // Кнопка отзывов Feedback
+            if (ariaId === "feedback") {
                 e.preventDefault(); e.stopPropagation();
                 openFeedbackWindow(); return;
+            }
+            // Кнопка видео Watch video overview (Обновляет ссылку в родном плеере Framer!)
+            if (ariaId === "vdeo") {
+                // Позволяем Фреймеру запустить оверлей, но через 50 миллисекунд находим iframe плеера и крепим к нему site-config.json
+                setTimeout(function() {
+                    const framerIframe = document.querySelector('iframe[src*="youtube.com"]');
+                    if (framerIframe && typeof siteConfig !== 'undefined' && siteConfig.app_video) {
+                        framerIframe.src = "https://youtube.com" + siteConfig.app_video.youtubeId + "?autoplay=1";
+                    }
+                }, 50);
+                return;
+            }
+            // Кнопки магазинов-заглушек (Полностью ИГНОРИРУЕМ их, отдавая управление Framer)
+            if (ariaId === "get-ios" || ariaId === "get-android") {
+                return; 
             }
         }
         target = target.parentNode;
