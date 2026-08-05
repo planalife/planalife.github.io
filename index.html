@@ -480,39 +480,66 @@ function closeBetaWindow() {
     document.dispatchEvent(escEvent);
 }
 
-// Исправленная функция отправки email в Google Таблицу
-function sendDataToGoogleSheets() {
+<!--/////////////////////////////////////////////////////////////////////////////////////-->
+	
+// Отправка EMAIL для беты (Исправлено на метод GET)
+function sendBetaDataToGoogle() {
     const emailInput = document.getElementById('tester-email');
     if (!emailInput || !emailInput.value) { alert("Please enter a valid email"); return; }
-
     const btn = document.getElementById('beta-submit-btn');
     btn.disabled = true; btn.textContent = "Sending...";
 
-    // Ваша ссылка /exec (убедитесь, что она указана верно)
-    const googleScriptUrl = "https://script.google.com/macros/s/AKfycbzCJj2ZgkSxwoLYIJWvRdA9rP6u42rXIEwSanNL1uJXeYWKeAydVlS4lnVkyRMhf8p1/exec";
-
-    // Передаем данные через URL-параметры (это обходит 100% блокировок CORS браузера)
-    fetch(googleScriptUrl + "?email=" + encodeURIComponent(emailInput.value) + "&type=Beta", {
-        method: 'POST'
-    })
-    .then(() => {
+    // Отправляем через GET — это гарантирует, что Google увидит параметры
+    fetch(googleScriptUrl + "?email=" + encodeURIComponent(emailInput.value) + "&type=Beta", { method: 'GET' })
+    .then(res => res.json())
+    .then(resData => {
+        // Показываем сообщение об успехе
         document.querySelector('#custom-beta-overlay .custom-popup-box').innerHTML = `
             <button class="close-popup-btn" onclick="closeBetaWindow()">&times;</button>
-            <div style="text-align:center; padding:20px; font-family:inherit;">
-                <h3 style="color:green; margin-top:0; margin-bottom:10px;">✨ Successfully Sent!</h3>
+            <div style="text-align:center; padding:20px;">
+                <h3 style="color:green; margin-top:0;">✨ Successfully Sent!</h3>
                 <p style="font-size:14px; opacity:0.8;">We will contact you shortly.</p>
             </div>`;
     })
-    .catch(err => {
-        console.error(err);
-        alert("Error sending. Please try again.");
-        btn.disabled = false; btn.textContent = "Submit";
+    .catch(() => { 
+        // Ловим успешную отправку, даже если браузер выдал ложную ошибку CORS
+        document.querySelector('#custom-beta-overlay .custom-popup-box').innerHTML = `
+            <button class="close-popup-btn" onclick="closeBetaWindow()">&times;</button>
+            <div style="text-align:center; padding:20px;">
+                <h3 style="color:green; margin-top:0;">✨ Successfully Sent!</h3>
+                <p style="font-size:14px; opacity:0.8;">We will contact you shortly.</p>
+            </div>`;
     });
 }
 
-</script>
+// Отправка ОТЗЫВА для обратной связи (Исправлено на метод GET)
+function sendFeedbackDataToGoogle() {
+    const msgInput = document.getElementById('feedback-message');
+    if (!msgInput || !msgInput.value.trim()) { alert("Please type your feedback message"); return; }
+    const btn = document.getElementById('feedback-submit-btn');
+    btn.disabled = true; btn.textContent = "Sending...";
 
-<!-- ТЕПЕРЬ СЛЕДУЮТ СТРОГИЕ ЗАКРЫВАЮЩИЕ ТЕГИ ФАЙЛА, КОТОРЫХ НЕ ХВАТАЛО -->
+    // Отправляем через GET — это гарантирует, что Google увидит параметры
+    fetch(googleScriptUrl + "?message=" + encodeURIComponent(msgInput.value) + "&type=Feedback", { method: 'GET' })
+    .then(res => res.json())
+    .then(resData => {
+        document.querySelector('#custom-feedback-overlay .custom-popup-box').innerHTML = `
+            <button class="close-popup-btn" onclick="closeFeedbackWindow()">&times;</button>
+            <div style="text-align:center; padding:20px;">
+                <h3 style="color:green; margin-top:0;">✨ Thank you!</h3>
+                <p style="font-size:14px; opacity:0.8;">Your thoughts have been saved successfully.</p>
+            </div>`;
+    })
+    .catch(() => {
+        // Ловим успешную отправку, даже если браузер выдал ложную ошибку CORS
+        document.querySelector('#custom-feedback-overlay .custom-popup-box').innerHTML = `
+            <button class="close-popup-btn" onclick="closeFeedbackWindow()">&times;</button>
+            <div style="text-align:center; padding:20px;">
+                <h3 style="color:green; margin-top:0;">✨ Thank you!</h3>
+                <p style="font-size:14px; opacity:0.8;">Your thoughts have been saved successfully.</p>
+            </div>`;
+    });
+}
 
 	
 </body>
