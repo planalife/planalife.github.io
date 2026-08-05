@@ -403,11 +403,12 @@ function selectLangAction(langCode, manualUrl) {
 <!-- ******************************************************** -->
 <!-- ЧАСТЬ 1: СТИЛИ И ОКНА ФОРМ ДЛЯ ПК И ТЕЛЕФОНОВ -->
 <style>
-  #custom-beta-overlay, #custom-feedback-overlay {
+   #custom-beta-overlay, #custom-feedback-overlay {
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(5px); z-index: 9999999;
-    pointer-events: none;
+    pointer-events: auto; /* ТЕПЕРЬ ФОН ЛОВИТ КЛИКИ СМАРТФОНОВ И ПК */
   }
+
   .custom-popup-box {
     position: fixed !important; top: 50% !important; left: 50% !important;
     transform: translate(-50%, -50%) !important;
