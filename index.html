@@ -463,47 +463,52 @@ function selectLangAction(langCode, manualUrl) {
 <!-- ******************************************************** -->
 
 <!-- ******************************************************** -->
-<!-- ЧАСТЬ 2: СКРИПТ УПРАВЛЕНИЯ КЛИКАМИ И ОТПРАВКОЙ ДАННЫХ -->
+<!-- ФИНАЛЬНАЯ ЧАСТЬ 2: МОБИЛЬНЫЙ СКРИПТ С НАЖАТИЕМ НА ЭКРАН -->
 <script type="text/javascript">
 const googleScriptUrl = "https://script.google.com/macros/s/AKfycbzCJj2ZgkSxwoLYIJWvRdA9rP6u42rXIEwSanNL1uJXeYWKeAydVlS4lnVkyRMhf8p1/exec";
+
+
 let activeBetaType = "Beta"; 
 
-document.addEventListener("DOMContentLoaded", function() {
-    const findButtonsInterval = setInterval(function() {
-        const allElements = document.getElementsByTagName('*');
-        for (let el of allElements) {
-            const text = el.textContent.replace(/\s+/g, ' ').trim();
-
+// Функция для мгновенной проверки: на что именно нажал пользователь пальцем или мышкой
+function handleGlobalClick(e) {
+    // Проверяем сам элемент, на который нажали, и его родителей (на случай если нажали чуть мимо букв)
+    let target = e.target;
+    while (target && target !== document.body) {
+        if (target.textContent) {
+            // Очищаем текст от скрытых пробелов
+            const text = target.textContent.replace(/\s+/g, ' ').trim();
+            
+            // 1. Если палец коснулся кнопки Android
             if (text === "Android" || text === "Get it on Google Play") {
-                if (!el.onclick) {
-                    el.style.cursor = "pointer";
-                    el.onclick = function(e) { 
-                        e.preventDefault(); e.stopPropagation();
-                        activeBetaType = "Android Beta"; openBetaWindow(); 
-                    };
-                }
+                e.preventDefault(); e.stopPropagation();
+                activeBetaType = "Android Beta"; 
+                openBetaWindow();
+                return; // Останавливаем проверку, окно уже открыто
             }
+            
+            // 2. Если палец коснулся кнопки iOS
             if (text === "iOS" || text === "Apple" || text === "Download on App Store") {
-                if (!el.onclick) {
-                    el.style.cursor = "pointer";
-                    el.onclick = function(e) { 
-                        e.preventDefault(); e.stopPropagation();
-                        activeBetaType = "iOS Beta"; openBetaWindow(); 
-                    };
-                }
+                e.preventDefault(); e.stopPropagation();
+                activeBetaType = "iOS Beta"; 
+                openBetaWindow();
+                return;
             }
+            
+            // 3. Если палец коснулся кнопки отзывов
             if (text === "Share Your Thoughts") {
-                if (!el.onclick) {
-                    el.style.cursor = "pointer";
-                    el.onclick = function(e) { 
-                        e.preventDefault(); e.stopPropagation();
-                        openFeedbackWindow(); 
-                    };
-                }
+                e.preventDefault(); e.stopPropagation();
+                openFeedbackWindow();
+                return;
             }
         }
-    }, 500);
-});
+        target = target.parentNode;
+    }
+}
+
+// ПРИВЯЗЫВАЕМ СЛЕЖКУ К ЭКРАНУ (Сработает мгновенно на ПК и телефонах)
+document.addEventListener("click", handleGlobalClick, true); // Для мышки
+document.addEventListener("touchstart", handleGlobalClick, {passive: false, capture: true}); // Для пальца на смартфонах
 
 function openBetaWindow() { 
     document.getElementById('custom-beta-overlay').querySelector('.custom-popup-box').innerHTML = `
