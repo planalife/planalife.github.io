@@ -1,59 +1,84 @@
-// Автоматически создаем стили для языковой кнопки и меню
-const langStyles = document.createElement('style');
-langStyles.innerHTML = `
+<!--/////////////////////////////////////////////////////////////////////////////////////-->
+	<!-- 1. СТИЛИ И ВНЕШНИЙ ВИД КНОПКИ С ГЛОБУСОМ -->
+<!-- 1. СТИЛИ И ВНЕШНИЙ ВИД КНОПКИ С ГЛОБУСОМ -->
+<style>
   #custom-lang-btn {
-    position: fixed !important; bottom: 20px !important; left: 20px !important;
-    background: #8F2100 !important; color: #ffffff !important; border: none !important;
-    padding: 10px 16px !important; border-radius: 20px !important; font-weight: bold !important;
-    cursor: pointer !important; z-index: 10000000 !important; font-family: sans-serif !important;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+    position: fixed; top: 20px; right: 20px; z-index: 999999;
+    padding: 10px 16px; border-radius: 24px; background: #ffffff; color: #000000;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 14px; font-weight: 600;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12); cursor: pointer; border: 1px solid rgba(0,0,0,0.08);
   }
   #custom-lang-dropdown {
-    display: none; position: fixed !important; bottom: 70px !important; left: 20px !important;
-    background: #FFF5F5 !important; border: 1px solid rgba(143, 33, 0, 0.1) !important;
-    border-radius: 12px !important; padding: 8px 0 !important; width: 180px !important;
-    box-shadow: 0 8px 25px rgba(143, 33, 0, 0.15) !important; z-index: 10000000 !important;
+    display: none; position: fixed; top: 70px; right: 20px; z-index: 999999;
+    background: #ffffff; border-radius: 12px; padding: 8px; width: 170px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15); border: 1px solid rgba(0,0,0,0.08);
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   }
-  #custom-lang-dropdown a {
-    display: block !important; padding: 10px 16px !important; color: #4A2C22 !important;
-    text-decoration: none !important; font-family: sans-serif !important; font-size: 14px !important;
+  #custom-lang-dropdown a, #custom-lang-dropdown button {
+    display: block; width: 100%; padding: 10px; border: none; background: none; text-align: left;
+    font-size: 14px; font-weight: 500; cursor: pointer; border-radius: 6px; color: #000 !important;
+    text-decoration: none !important; box-sizing: border-box;
   }
-  #custom-lang-dropdown a:hover { background: rgba(143, 33, 0, 0.05) !important; }
-`;
-document.head.appendChild(langStyles);
+  #custom-lang-dropdown a:hover, #custom-lang-dropdown button:hover { background: #f5f5f7; }
+</style>
 
-// Автоматически создаем саму плавающую кнопку на экране
-const langBtn = document.createElement('button');
-langBtn.id = 'custom-lang-btn';
-langBtn.innerHTML = '🌐 Language';
-langBtn.onclick = function(e) { e.preventDefault(); e.stopPropagation(); toggleLangMenu(); };
-document.body.appendChild(langBtn);
+<!-- ВИЗУАЛЬНЫЕ ЭЛЕМЕНТЫ КНОПКИ И МЕНЮ -->
+<div id="custom-lang-btn" onclick="toggleLangMenu()">Language 🌐</div>
 
-// Автоматически создаем выпадающее меню со ВСЕМИ вашими языками
-const langDropdown = document.createElement('div');
-langDropdown.id = 'custom-lang-dropdown';
-langDropdown.innerHTML = `
-  <a href="https://github.io" onclick="toggleLangMenu()">Русский 🇷🇺</a>
-  <a href="https://google.com" onclick="toggleLangMenu()">Español 🇪🇸</a>
-  <a href="https://google.com" onclick="toggleLangMenu()">Deutsch 🇩🇪</a>
-  <a href="https://google.com" onclick="toggleLangMenu()">עברית 🇮🇱</a>
-  <a href="https://google.com" onclick="toggleLangMenu()">日本語 🇯🇵</a>
-  <a href="https://google.com" onclick="toggleLangMenu()">Français 🇫🇷</a>
-`;
-document.body.appendChild(langDropdown);
+<div id="custom-lang-dropdown">
+  <!-- ВНИМАНИЕ: Замените 'https://github.io' на реальный чистый адрес вашего сайта -->
+  
+  <!-- Ссылка на ваш готовый ручной русский сайт -->
+  <a href="https://planalife.app/ru" onclick="toggleLangMenu()">Русский 🇷🇺</a>
+  
+  <!-- Прямая ссылка-шлюз на автоперевод текущего сайта на Испанский -->
+  <a href="https://translate.google.com/translate?sl=en&tl=es&u=https://planalife.app" onclick="toggleLangMenu()">Español 🇪🇸</a>
+  
+  <!-- Прямая ссылка-шлюз на автоперевод текущего сайта на Немецкий -->
+  <a href="https://translate.google.com/translate?sl=en&tl=de&u=https://planalife.app" onclick="toggleLangMenu()">Deutsch 🇩🇪</a>
+	<!-- НОВЫЕ ЯЗЫКИ (Автоперевод включен по умолчанию) -->
+  <!-- Иврит (Языковой код: he) -->
+  <a href="https://translate.google.com/translate?sl=en&tl=he&u=https://planalife.app" onclick="toggleLangMenu()">עברית 🇮🇱</a>
 
-// Функция открытия/закрытия меню
-window.toggleLangMenu = function() {
+  <!-- Японский (Языковой код: ja) -->
+  <a href="https://translate.google.com/translate?sl=en&tl=ja&u=https://planalife.app" onclick="toggleLangMenu()">日本語 🇯🇵</a>
+
+  <!-- Французский (Языковой код: fr) -->
+  <a href="https://translate.google.com/translate?sl=en&tl=fr&u=https://planalife.app" onclick="toggleLangMenu()">Français 🇫🇷</a>
+</div>
+
+<!-- 2. СКРИПТ УПРАВЛЕНИЯ ГИБРИДНЫМ ПЕРЕВОДОМ -->
+<!-- 2. СКРИПТ УПРАВЛЕНИЯ ГИБРИДНЫМ ПЕРЕВОДОМ (РАБОЧАЯ ГИБРИДНАЯ ВЕРСИЯ) -->
+<script type="text/javascript">
+// Функция открытия и закрытия меню при клике на кнопку Language
+function toggleLangMenu() {
     const menu = document.getElementById('custom-lang-dropdown');
     if (menu.style.display === 'block') {
-        menu.style.display = 'none';
+        menu.style.opacity = '0';
+        setTimeout(() => { menu.style.display = 'none'; }, 200);
     } else {
         menu.style.display = 'block';
+        setTimeout(() => { menu.style.opacity = '1'; }, 10);
     }
-};
+}
 
-// Закрываем меню языков, если кликнули в любое другое место экрана
-document.addEventListener('click', function() {
-    const menu = document.getElementById('custom-lang-dropdown');
-    if (menu) menu.style.display = 'none';
-});
+// Логика выбора языка (Новый гарантированный метод)
+function selectLangAction(langCode, manualUrl) {
+    // Закрываем меню
+    document.getElementById('custom-lang-dropdown').style.display = 'none';
+
+    if (manualUrl && manualUrl !== "") {
+        // ЕСЛИ ССЫЛКА ЕСТЬ: Уводим на вашу качественную ручную страницу
+        window.location.href = manualUrl;
+    } else {
+        // ЕСЛИ ССЫЛКИ НЕТ: Берем текущую ссылку на ваш сайт и открываем её через официальный безопасный шлюз перевода Google
+        const currentUrl = window.location.href.split('#')[0]; // Берем чистый URL сайта
+        
+        // Создаем официальную прямую ссылку на автоперевод этой страницы
+        const googleTranslateUrl = "https://google.com" + langCode + "&u=" + encodeURIComponent(currentUrl);
+        
+        // Открываем переведенный сайт прямо в этой же вкладке
+        window.location.href = googleTranslateUrl;
+    }
+}
+</script>
