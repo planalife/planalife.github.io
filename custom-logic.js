@@ -1,4 +1,4 @@
-const googleScriptUrl = "https://google.com";
+const googleScriptUrl = "https://script.google.com/macros/s/AKfycbzCJj2ZgkSxwoLYIJWvRdA9rP6u42rXIEwSanNL1uJXeYWKeAydVlS4lnVkyRMhf8p1/exec";
 let activeBetaType = "Beta"; 
 
 let isBetaSent = false;
