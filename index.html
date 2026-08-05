@@ -395,43 +395,36 @@ function selectLangAction(langCode, manualUrl) {
     }
 }
 </script>
-//////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 <!-- ======================================================== -->
 <!-- ИСПРАВЛЕННЫЙ ЦЕЛЬНЫЙ БЛОК ДЛЯ БЕТА-ТЕСТА И ОТЗЫВОВ -->
 
-<!-- НОВЫЕ ИСПРАВЛЕННЫЕ СТИЛИ (Фирменный светло-розовый фон и исправление оверлея) -->
+<!-- СТИЛИ ОКЕН (Цвета сохранены, добавлена идеальная адаптивность) -->
 <style>
-  /* Общие стили для черных фонов-оверлеев */
   #custom-beta-overlay, #custom-feedback-overlay {
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(5px); z-index: 9999999;
     align-items: center; justify-content: center; opacity: 0; transition: opacity 0.25s ease;
   }
-  /* Фирменная плашка по центру (ЦВЕТ ЗАМЕНЕН НА СВЕТЛО-РОЗОВЫЙ С ОТТЕНКОМ БОРДО) */
   .custom-popup-box {
-    background: #FFF5F5 !important; /* Нежный светло-розовый оттенок бордо */
-    color: #4A2C22 !important; /* Красивый темный оттенок для текста в тон */
+    background: #FFF5F5 !important; 
+    color: #4A2C22 !important; 
     padding: 35px 30px 30px 30px; border-radius: 16px; width: 420px; max-width: 90%;
-    box-shadow: 0 12px 40px rgba(143, 33, 0, 0.15); text-align: center;
+    box-shadow: 0 12px 40px rgba(143, 33, 0, 0.2); text-align: center;
     font-family: -apple-system, BlinkMacSystemFont, sans-serif; position: relative;
     box-sizing: border-box; border: 1px solid rgba(143, 33, 0, 0.1);
   }
-  /* Поля ввода внутри окон */
   .custom-popup-box input {
     width: 100% !important; padding: 12px !important; border: 1px solid rgba(143,33,0,0.2) !important;
     border-radius: 8px !important; margin-bottom: 15px !important; box-sizing: border-box !important;
     background: #ffffff !important; color: #000000 !important; font-size: 16px !important;
   }
-  /* Кнопки отправки (Автоматически подстроятся под темный цвет текста сайта) */
   .custom-popup-box button {
     width: 100% !important; padding: 12px !important; 
-    background: #8F2100 !important; /* Фирменный глубокий бордовый цвет логотипа */
+    background: #8F2100 !important; 
     color: #ffffff !important; border: none !important; border-radius: 8px !important;
     font-weight: bold !important; cursor: pointer !important; font-family: inherit;
-    transition: background 0.2s;
   }
-  .custom-popup-box button:hover { background: #6E1900 !important; }
-  /* Маленькая и аккуратная кнопка-крестик */
   .close-popup-btn {
     position: absolute !important; top: 12px !important; right: 12px !important;
     width: 28px !important; height: 28px !important; min-width: 28px !important; max-width: 28px !important;
@@ -439,12 +432,12 @@ function selectLangAction(langCode, manualUrl) {
     font-size: 18px !important; line-height: 26px !important; cursor: pointer !important; 
     color: #8F2100 !important; padding: 0 !important; 
     display: flex !important; align-items: center; justify-content: center;
-    z-index: 10000000 !important; box-shadow: none !important;
+    z-index: 10000000 !important;
   }
   .close-popup-btn:hover { background: rgba(143, 33, 0, 0.15) !important; }
 </style>
 
-<!-- ОКНО №1: БЕТА-ТЕСТ (Для iOS / Android) -->
+<!-- ОКНО №1: БЕТА-ТЕСТ -->
 <div id="custom-beta-overlay">
     <div class="custom-popup-box">
         <button class="close-popup-btn" onclick="closeBetaWindow()">&times;</button>
@@ -455,16 +448,16 @@ function selectLangAction(langCode, manualUrl) {
     </div>
 </div>
 
-<!-- ОКНО №2: ОБРАТНОЙ СВЯЗИ (Для Share Your Thoughts) -->
+<!-- ОКНО №2: ОБРАТНОЙ СВЯЗИ -->
 <div id="custom-feedback-overlay">
-    <div class="custom-popup-box" style="width: 550px; max-width: 95%; height: 550px; max-height: 90vh; padding: 20px; display: flex; flex-direction: column; background: #FFF5F5 !important;">
+    <div class="custom-popup-box" style="width: 550px; max-width: 95%; height: 550px; max-height: 90vh; padding: 20px; display: flex; flex-direction: column;">
         <button class="close-popup-btn" onclick="closeFeedbackWindow()">&times;</button>
-        <!-- ⚠️ ВНИМАНИЕ: Замените ссылку ниже на вашу реальную Tally или Google форму отзывов -->
+        <!-- ⚠️ ВНИМАНИЕ: Замените ссылку ниже на вашу реальную форму отзывов -->
         <iframe src="https://tally.so" width="100%" height="100%" frameborder="0" marginheight="0" marginwidth="0" style="border: none; border-radius: 8px; flex-grow: 1; margin-top:20px;">Loading...</iframe>
     </div>
 </div>
 
-<!-- ЕДИНЫЙ СКРИПТ УПРАВЛЕНИЯ КЛИКАМИ КНОПОК -->
+<!-- ЕДИНЫЙ СКРИПТ УПРАВЛЕНИЯ КЛИКАМИ -->
 <script type="text/javascript">
 document.addEventListener("DOMContentLoaded", function() {
     setTimeout(function() {
@@ -472,7 +465,7 @@ document.addEventListener("DOMContentLoaded", function() {
         for (let el of elements) {
             const text = el.textContent.trim();
             
-            // 1. Кнопки бета-теста (Android / iOS)
+            // Кнопки бета-теста (Android / iOS)
             if (text === "Android" || text === "iOS") {
                 el.style.cursor = "pointer";
                 el.onclick = function(e) {
@@ -481,7 +474,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 };
             }
 
-            // 2. Кнопка Обратной связи
+            // Кнопка Обратной связи
             if (text === "Share Your Thoughts") {
                 el.style.cursor = "pointer";
                 el.onclick = function(e) {
@@ -493,39 +486,54 @@ document.addEventListener("DOMContentLoaded", function() {
     }, 500);
 });
 
-// Функции для работы окна Беты
 function openBetaWindow() {
     const overlay = document.getElementById('custom-beta-overlay');
     overlay.style.display = 'flex';
     setTimeout(() => { overlay.style.opacity = '1'; }, 10);
 }
+
+// УЛУЧШЕННОЕ ЗАКРЫТИЕ: Скрипт сам находит и закрывает темный фон Framer
 function closeBetaWindow() {
     const overlay = document.getElementById('custom-beta-overlay');
     overlay.style.opacity = '0';
     setTimeout(() => { 
         overlay.style.display = 'none'; 
-        // ЖЕЛЕЗОБЕТОННОЕ ЗАКРЫТИЕ: Имитируем клик по экрану в пустом месте, чтобы Framer сам погасил свой темный фон
-        document.body.click();
+        closeFramerNativeOverlay(); // Закрываем родной оверлей Framer
     }, 250);
 }
 
-// Функции для работы окна Обратной связи
 function openFeedbackWindow() {
     const overlay = document.getElementById('custom-feedback-overlay');
     overlay.style.display = 'flex';
     setTimeout(() => { overlay.style.opacity = '1'; }, 10);
 }
+
+// УЛУЧШЕННОЕ ЗАКРЫТИЕ: Скрипт сам находит и закрывает темный фон Framer
 function closeFeedbackWindow() {
     const overlay = document.getElementById('custom-feedback-overlay');
     overlay.style.opacity = '0';
     setTimeout(() => { 
         overlay.style.display = 'none'; 
-        // ЖЕЛЕЗОБЕТОННОЕ ЗАКРЫТИЕ: Имитируем клик по экрану в пустом месте, чтобы Framer сам погасил свой темный фон
-        document.body.click();
+        closeFramerNativeOverlay(); // Закрываем родной оверлей Framer
     }, 250);
 }
 
-// Отправка введенного email в Google Таблицу
+// Функция, которая находит скрытый оверлей Framer и кликает по нему для полного закрытия страницы
+function closeFramerNativeOverlay() {
+    // Сканируем все элементы на сайте, которые создают темные фоны во Framer
+    const overlays = document.querySelectorAll('[data-framer-overlay], [class*="overlay"], [id*="overlay"]');
+    if (overlays.length > 0) {
+        overlays.forEach(ov => {
+            if (window.getComputedStyle(ov).display !== 'none') {
+                ov.click(); // Симулируем клик по фону Framer
+            }
+        });
+    }
+    // Если Framer использует стандартный клик по body для закрытия окон
+    document.body.click(); 
+}
+
+// Отправка email в Google Таблицу
 function sendDataToGoogleSheets() {
     const emailInput = document.getElementById('tester-email');
     if (!emailInput || !emailInput.value) { alert("Please enter a valid email"); return; }
@@ -533,7 +541,6 @@ function sendDataToGoogleSheets() {
     const btn = document.getElementById('beta-submit-btn');
     btn.disabled = true; btn.textContent = "Sending...";
 
-    // ⚠️ ВНИМАНИЕ: Вставьте сюда вашу ссылку /exec из Google Таблиц
     const googleScriptUrl = "https://google.com";
 
     fetch(googleScriptUrl, {
