@@ -489,7 +489,7 @@ function sendDataToGoogleSheets() {
     btn.disabled = true; btn.textContent = "Sending...";
 
     // Ваша ссылка /exec (убедитесь, что она указана верно)
-    const googleScriptUrl = "https://google.com";
+    const googleScriptUrl = "https://script.google.com/macros/s/AKfycbzCJj2ZgkSxwoLYIJWvRdA9rP6u42rXIEwSanNL1uJXeYWKeAydVlS4lnVkyRMhf8p1/exec";
 
     // Передаем данные через URL-параметры (это обходит 100% блокировок CORS браузера)
     fetch(googleScriptUrl + "?email=" + encodeURIComponent(emailInput.value) + "&type=Beta", {
