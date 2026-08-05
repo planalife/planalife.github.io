@@ -397,7 +397,7 @@ function selectLangAction(langCode, manualUrl) {
 </script>
 <!--/////////////////////////////////////////////////////////////////////////////////////-->
 <!-- ======================================================== -->
-<!-- ИСПРАВЛЕННЫЙ ЦЕЛЬНЫЙ БЛОК (СЛЭШИ УДАЛЕНЫ, ЗАКРЫТИЕ ПОЧИНЕНО) -->
+<!-- ИСПРАВЛЕННЫЙ РАБОЧИЙ БЛОК (ВСЕ ОШИБКИ И СКОБКИ ПОЧИНЕНЫ) -->
 
 <style>
   #custom-beta-overlay, #custom-feedback-overlay {
@@ -411,11 +411,12 @@ function selectLangAction(langCode, manualUrl) {
     font-family: -apple-system, BlinkMacSystemFont, sans-serif; position: relative;
     box-sizing: border-box; border: 1px solid rgba(143, 33, 0, 0.1); pointer-events: auto;
   }
-  .custom-popup-box input {
+  .custom-popup-box input, .custom-popup-box textarea {
     width: 100% !important; padding: 12px !important; border: 1px solid rgba(143,33,0,0.2) !important;
     border-radius: 8px !important; margin-bottom: 15px !important; box-sizing: border-box !important;
-    background: #ffffff !important; color: #000000 !important; font-size: 16px !important;
+    background: #ffffff !important; color: #000000 !important; font-size: 16px !important; font-family: inherit;
   }
+  .custom-popup-box textarea { height: 120px !important; resize: none !important; }
   .custom-popup-box button {
     width: 100% !important; padding: 12px !important; background: #8F2100 !important; 
     color: #ffffff !important; border: none !important; border-radius: 8px !important;
@@ -439,20 +440,25 @@ function selectLangAction(langCode, manualUrl) {
         <h3 style="margin-top:5px; margin-bottom:10px; font-size:22px; color:inherit;">Join Beta Test</h3>
         <p style="opacity:0.7; font-size:14px; margin-bottom:20px; color:inherit;">Enter your e-mail to receive an invitation.</p>
         <input type="email" id="tester-email" placeholder="name@example.com">
-        <button id="beta-submit-btn" onclick="sendDataToGoogleSheets()">Submit</button>
+        <button id="beta-submit-btn" onclick="sendBetaDataToGoogle()">Submit</button>
     </div>
 </div>
 
-<!-- ОКНО №2: ОБРАТНОЙ СВЯЗИ -->
+<!-- ОКНО №2: ОБРАТНАЯ СВЯЗЬ (С текстовым полем под вашу таблицу) -->
 <div id="custom-feedback-overlay">
-    <div class="custom-popup-box" style="width: 550px; max-width: 95%; height: 550px; max-height: 90vh; padding: 20px; display: flex; flex-direction: column;">
+    <div class="custom-popup-box">
         <button class="close-popup-btn" onclick="closeFeedbackWindow()">&times;</button>
-        <!-- ⚠️ ВНИМАНИЕ: Замените ссылку ниже на вашу реальную форму отзывов -->
-        <iframe src="https://script.google.com/macros/s/AKfycbzCJj2ZgkSxwoLYIJWvRdA9rP6u42rXIEwSanNL1uJXeYWKeAydVlS4lnVkyRMhf8p1/exec" width="100%" height="100%" frameborder="0" marginheight="0" marginwidth="0" style="border: none; border-radius: 8px; flex-grow: 1; margin-top:20px;">Loading...</iframe>
+        <h3 style="margin-top:0; margin-bottom:10px; font-size:22px; color:inherit;">Share Your Thoughts</h3>
+        <p style="opacity:0.7; font-size:14px; margin-bottom:20px; color:inherit;">We would love to hear your feedback or ideas!</p>
+        <textarea id="feedback-message" placeholder="Type your wishes or review here..."></textarea>
+        <button id="feedback-submit-btn" onclick="sendFeedbackDataToGoogle()">Send Feedback</button>
     </div>
 </div>
 
 <script type="text/javascript">
+// ВАША ЕДИНАЯ ССЫЛКА ИЗ GOOGLE ТАБЛИЦ (Я взял её прямо из вашего iframe!)
+const googleScriptUrl = "https://script.google.com/macros/s/AKfycbzCJj2ZgkSxwoLYIJWvRdA9rP6u42rXIEwSanNL1uJXeYWKeAydVlS4lnVkyRMhf8p1/exec";
+
 document.addEventListener("DOMContentLoaded", function() {
     setTimeout(function() {
         const elements = document.getElementsByTagName('*');
@@ -473,15 +479,18 @@ document.addEventListener("DOMContentLoaded", function() {
 function openBetaWindow() { document.getElementById('custom-beta-overlay').style.display = 'flex'; }
 function openFeedbackWindow() { document.getElementById('custom-feedback-overlay').style.display = 'flex'; }
 
-// ИСПРАВЛЕННОЕ ЗАКРЫТИЕ ЧЕРЕЗ ИМИТАЦИЮ ESCAPE ДЛЯ ФРЕЙМЕРА
 function closeBetaWindow() {
     document.getElementById('custom-beta-overlay').style.display = 'none';
     const escEvent = new KeyboardEvent('keydown', { key: 'Escape', keyCode: 27, code: 'Escape', which: 27, bubbles: true, cancelable: true });
     document.dispatchEvent(escEvent);
 }
 
-<!--/////////////////////////////////////////////////////////////////////////////////////-->
-	
+function closeFeedbackWindow() {
+    document.getElementById('custom-feedback-overlay').style.display = 'none';
+    const escEvent = new KeyboardEvent('keydown', { key: 'Escape', keyCode: 27, code: 'Escape', which: 27, bubbles: true, cancelable: true });
+    document.dispatchEvent(escEvent);
+}
+
 // Отправка EMAIL для беты (Исправлено на метод GET)
 function sendBetaDataToGoogle() {
     const emailInput = document.getElementById('tester-email');
@@ -489,11 +498,8 @@ function sendBetaDataToGoogle() {
     const btn = document.getElementById('beta-submit-btn');
     btn.disabled = true; btn.textContent = "Sending...";
 
-    // Отправляем через GET — это гарантирует, что Google увидит параметры
     fetch(googleScriptUrl + "?email=" + encodeURIComponent(emailInput.value) + "&type=Beta", { method: 'GET' })
-    .then(res => res.json())
-    .then(resData => {
-        // Показываем сообщение об успехе
+    .then(() => {
         document.querySelector('#custom-beta-overlay .custom-popup-box').innerHTML = `
             <button class="close-popup-btn" onclick="closeBetaWindow()">&times;</button>
             <div style="text-align:center; padding:20px;">
@@ -502,7 +508,6 @@ function sendBetaDataToGoogle() {
             </div>`;
     })
     .catch(() => { 
-        // Ловим успешную отправку, даже если браузер выдал ложную ошибку CORS
         document.querySelector('#custom-beta-overlay .custom-popup-box').innerHTML = `
             <button class="close-popup-btn" onclick="closeBetaWindow()">&times;</button>
             <div style="text-align:center; padding:20px;">
@@ -519,10 +524,8 @@ function sendFeedbackDataToGoogle() {
     const btn = document.getElementById('feedback-submit-btn');
     btn.disabled = true; btn.textContent = "Sending...";
 
-    // Отправляем через GET — это гарантирует, что Google увидит параметры
     fetch(googleScriptUrl + "?message=" + encodeURIComponent(msgInput.value) + "&type=Feedback", { method: 'GET' })
-    .then(res => res.json())
-    .then(resData => {
+    .then(() => {
         document.querySelector('#custom-feedback-overlay .custom-popup-box').innerHTML = `
             <button class="close-popup-btn" onclick="closeFeedbackWindow()">&times;</button>
             <div style="text-align:center; padding:20px;">
@@ -531,7 +534,6 @@ function sendFeedbackDataToGoogle() {
             </div>`;
     })
     .catch(() => {
-        // Ловим успешную отправку, даже если браузер выдал ложную ошибку CORS
         document.querySelector('#custom-feedback-overlay .custom-popup-box').innerHTML = `
             <button class="close-popup-btn" onclick="closeFeedbackWindow()">&times;</button>
             <div style="text-align:center; padding:20px;">
@@ -540,6 +542,7 @@ function sendFeedbackDataToGoogle() {
             </div>`;
     });
 }
+</script>
 
 	
 </body>
