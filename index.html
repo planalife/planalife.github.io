@@ -464,30 +464,44 @@ function selectLangAction(langCode, manualUrl) {
 	
 <!-- ******************************************************** -->
 	
-<!-- ФИНАЛЬНАЯ ЧАСТЬ 2: МОБИЛЬНЫЙ СКРИПТ С ЗАКРЫТИЕМ ПО ФОНУ -->
+<!-- ******************************************************** -->
+<!-- ФИНАЛЬНАЯ ЧАСТЬ 2: УМНЫЙ СКРИПТ С АВТОЗАКРЫТИЕМ ОКНА -->
 <script type="text/javascript">
-const googleScriptUrl = "https://script.google.com/macros/s/AKfycbzCJj2ZgkSxwoLYIJWvRdA9rP6u42rXIEwSanNL1uJXeYWKeAydVlS4lnVkyRMhf8p1/exec";
+const googleScriptUrl = "https://google.com";
 let activeBetaType = "Beta"; 
 
-// Функция для мгновенной проверки кликов и касаний
-// Функция для мгновенной проверки кликов (ЗАКРЫТИЕ ПО ФОНУ СРАБОТАЕТ НА 100%)
+let isBetaSent = false;
+let isFeedbackSent = false;
+
 function handleGlobalClick(e) {
     let target = e.target;
     
-    // Если кликнули точно по нашему темному фону вокруг розового окошка
-    if (target.id === "custom-beta-overlay" || target.id === "custom-feedback-overlay" || target.className === "close-popup-btn") {
-        e.preventDefault(); e.stopPropagation();
-        
-        // Намертво закрываем и прячем абсолютно всё
-        document.getElementById('custom-beta-overlay').style.display = 'none';
-        document.getElementById('custom-feedback-overlay').style.display = 'none';
-        
-        // Вызываем Esc — Фреймер послушно закроет свой темный занавес
-        const escEvent = new KeyboardEvent('keydown', { key: 'Escape', keyCode: 27, code: 'Escape', which: 27, bubbles: true, cancelable: true });
-        document.dispatchEvent(escEvent);
-        return;
+    // 1. ОПРЕДЕЛЯЕМ КЛИК ПО ТЕМНОМУ ФОНУ ВОКРУГ ОКНА
+    if (target.id === "custom-beta-overlay" || target.id === "custom-feedback-overlay") {
+        if (e.type !== "touchstart") {
+            e.preventDefault(); e.stopPropagation();
+            closeAllCustomPopups();
+            return;
+        }
+        if (target.id === "custom-beta-overlay" && isBetaSent) {
+            e.preventDefault(); e.stopPropagation();
+            closeAllCustomPopups();
+            return;
+        }
+        if (target.id === "custom-feedback-overlay" && isFeedbackSent) {
+            e.preventDefault(); e.stopPropagation();
+            closeAllCustomPopups();
+            return;
+        }
+        return; 
     }
 
+    // 2. КЛИК ПО КРЕСТИКУ
+    if (target.className === "close-popup-btn") {
+        e.preventDefault(); e.stopPropagation();
+        closeAllCustomPopups();
+        return;
+    }
 
     // Проверяем элементы для открытия окон (кнопки)
     while (target && target !== document.body) {
@@ -511,13 +525,13 @@ function handleGlobalClick(e) {
     }
 }
 
-// ПРИВЯЗЫВАЕМ СЛЕЖКУ К ЭКРАНУ
 document.addEventListener("click", handleGlobalClick, true);
 document.addEventListener("touchstart", handleGlobalClick, {passive: false, capture: true});
 
 function openBetaWindow() { 
+    isBetaSent = false; 
     document.getElementById('custom-beta-overlay').querySelector('.custom-popup-box').innerHTML = `
-        <button class="close-popup-btn" onclick="closeBetaWindow()">&times;</button>
+        <button class="close-popup-btn" onclick="closeAllCustomPopups()">&times;</button>
         <h3 style="margin-top:5px; margin-bottom:10px; font-size:22px; color:inherit;">Join Beta Test</h3>
         <p style="opacity:0.7; font-size:14px; margin-bottom:20px; color:inherit;">Enter your e-mail to receive an invitation.</p>
         <input type="email" id="tester-email" placeholder="name@example.com">
@@ -527,8 +541,9 @@ function openBetaWindow() {
 }
 
 function openFeedbackWindow() { 
+    isFeedbackSent = false; 
     document.getElementById('custom-feedback-overlay').querySelector('.custom-popup-box').innerHTML = `
-        <button class="close-popup-btn" onclick="closeFeedbackWindow()">&times;</button>
+        <button class="close-popup-btn" onclick="closeAllCustomPopups()">&times;</button>
         <h3 style="margin-top:0; margin-bottom:10px; font-size:22px; color:inherit;">Share Your Thoughts</h3>
         <p style="opacity:0.7; font-size:14px; margin-bottom:20px; color:inherit;">We would love to hear your feedback or ideas!</p>
         <textarea id="feedback-message" placeholder="Type your wishes or review here..."></textarea>
@@ -537,14 +552,11 @@ function openFeedbackWindow() {
     document.getElementById('custom-feedback-overlay').style.display = 'flex'; 
 }
 
-function closeBetaWindow() {
+function closeAllCustomPopups() {
     document.getElementById('custom-beta-overlay').style.display = 'none';
-    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', keyCode: 27, code: 'Escape', which: 27, bubbles: true, cancelable: true }));
-}
-
-function closeFeedbackWindow() {
     document.getElementById('custom-feedback-overlay').style.display = 'none';
-    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', keyCode: 27, code: 'Escape', which: 27, bubbles: true, cancelable: true }));
+    const escEvent = new KeyboardEvent('keydown', { key: 'Escape', keyCode: 27, code: 'Escape', which: 27, bubbles: true, cancelable: true });
+    document.dispatchEvent(escEvent);
 }
 
 function sendBetaDataToGoogle() {
@@ -555,24 +567,26 @@ function sendBetaDataToGoogle() {
 
     fetch(googleScriptUrl + "?email=" + encodeURIComponent(emailInput.value) + "&type=" + encodeURIComponent(activeBetaType), { method: 'GET' })
     .then(() => {
+        isBetaSent = true; 
         document.querySelector('#custom-beta-overlay .custom-popup-box').innerHTML = `
-            <button class="close-popup-btn" onclick="closeBetaWindow()">&times;</button>
-            <div style="text-align:center; padding:20px;">
-                <h3 style="color:green; margin-top:0;">✨ Successfully Sent!</h3>
-                <p style="font-size:14px; opacity:0.8;">We will contact you shortly.</p>
+            <div style="text-align:center; padding:20px 10px;">
+                <h3 style="color:green; margin-top:0; font-size:24px;">✨ Successfully Sent!</h3>
+                <p style="font-size:15px; opacity:0.8; margin-bottom:0;">We will contact you shortly.</p>
             </div>`;
+        // МАГИЯ: Автоматически закрываем окно ровно через 3 секунды
+        setTimeout(closeAllCustomPopups, 3000);
     })
     .catch(() => { 
+        isBetaSent = true;
         document.querySelector('#custom-beta-overlay .custom-popup-box').innerHTML = `
-            <button class="close-popup-btn" onclick="closeBetaWindow()">&times;</button>
-            <div style="text-align:center; padding:20px;">
-                <h3 style="color:green; margin-top:0;">✨ Successfully Sent!</h3>
-                <p style="font-size:14px; opacity:0.8;">We will contact you shortly.</p>
+            <div style="text-align:center; padding:20px 10px;">
+                <h3 style="color:green; margin-top:0; font-size:24px;">✨ Successfully Sent!</h3>
+                <p style="font-size:15px; opacity:0.8; margin-bottom:0;">We will contact you shortly.</p>
             </div>`;
+        setTimeout(closeAllCustomPopups, 3000);
     });
 }
 
-// Отправка ОТЗЫВА
 function sendFeedbackDataToGoogle() {
     const msgInput = document.getElementById('feedback-message');
     if (!msgInput || !msgInput.value.trim()) { alert("Please type your feedback message"); return; }
@@ -581,20 +595,23 @@ function sendFeedbackDataToGoogle() {
 
     fetch(googleScriptUrl + "?message=" + encodeURIComponent(msgInput.value) + "&type=Feedback", { method: 'GET' })
     .then(() => {
+        isFeedbackSent = true; 
         document.querySelector('#custom-feedback-overlay .custom-popup-box').innerHTML = `
-            <button class="close-popup-btn" onclick="closeFeedbackWindow()">&times;</button>
-            <div style="text-align:center; padding:20px;">
-                <h3 style="color:green; margin-top:0;">✨ Thank you!</h3>
-                <p style="font-size:14px; opacity:0.8;">Your thoughts have been saved successfully.</p>
+            <div style="text-align:center; padding:20px 10px;">
+                <h3 style="color:green; margin-top:0; font-size:24px;">✨ Thank you!</h3>
+                <p style="font-size:15px; opacity:0.8; margin-bottom:0;">Your thoughts have been saved successfully.</p>
             </div>`;
+        // МАГИЯ: Автоматически закрываем окно ровно через 3 секунды
+        setTimeout(closeAllCustomPopups, 3000);
     })
     .catch(() => {
+        isFeedbackSent = true;
         document.querySelector('#custom-feedback-overlay .custom-popup-box').innerHTML = `
-            <button class="close-popup-btn" onclick="closeFeedbackWindow()">&times;</button>
-            <div style="text-align:center; padding:20px;">
-                <h3 style="color:green; margin-top:0;">✨ Thank you!</h3>
-                <p style="font-size:14px; opacity:0.8;">Your thoughts have been saved successfully.</p>
+            <div style="text-align:center; padding:20px 10px;">
+                <h3 style="color:green; margin-top:0; font-size:24px;">✨ Thank you!</h3>
+                <p style="font-size:15px; opacity:0.8; margin-bottom:0;">Your thoughts have been saved successfully.</p>
             </div>`;
+        setTimeout(closeAllCustomPopups, 3000);
     });
 }
 </script>
