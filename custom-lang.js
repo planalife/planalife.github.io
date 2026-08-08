@@ -10,7 +10,7 @@ langStyles.innerHTML = `
     padding: 20px 28px !important; 
     border-radius: 32px !important; background: #ffffff !important; color: #1d19e6 !important;
     /* Крупный, четкий шрифт */
-    font-family: -apple-system, BlinkMacSystemFont, sans-serif !important; font-size: 18px !important; font-weight: 660 !important;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif !important; font-size: 22px !important; font-weight: 660 !important;
     box-shadow: 0 6px 24px rgba(0,0,0,0.15) !important; cursor: pointer !important; border: 1px solid rgba(0,0,0,0.08) !important;
     transition: transform 0.1s ease;
   }
