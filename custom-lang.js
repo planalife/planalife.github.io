@@ -20,7 +20,7 @@ langStyles.innerHTML = `
     display: none; position: fixed !important; top: 90px !important; right: 20px !important; z-index: 999999 !important;
     background: #ffffff !important; border-radius: 16px !important; padding: 12px !important; 
     /* Ширина меню увеличена почти в 2 раза (с 170px до 280px) */
-    width: 360px !important; 
+    width: 400px !important; 
     box-shadow: 0 8px 30px rgba(0,0,0,0.18) !important; border: 1px solid rgba(0,0,0,0.08) !important;
     font-family: -apple-system, BlinkMacSystemFont, sans-serif !important;
     transition: opacity 0.2s ease; opacity: 0;
@@ -32,7 +32,7 @@ langStyles.innerHTML = `
     /* Просторные отступы внутри строк меню */
     padding: 16px 12px !important; 
     border: none !important; background: none !important; text-align: left !important;
-    font-size: 22px !important; font-weight: 500 !important; cursor: pointer !important; border-radius: 8px !important; color: #000 !important;
+    font-size: 28px !important; font-weight: 500 !important; cursor: pointer !important; border-radius: 8px !important; color: #000 !important;
     text-decoration: none !important; box-sizing: border-box !important;
     margin-bottom: 4px !important;
   }
