@@ -4,46 +4,17 @@ popupStyles.innerHTML = `
   #custom-beta-overlay, #custom-feedback-overlay {
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(5px); z-index: 9999999;
-    
-    /* НА ПК: Элементы будут выравниваться строго по центру экрана */
-    display: none; align-items: center; justify-content: center;
-    box-sizing: border-box !important;
+    pointer-events: auto; /* Позволяет ловить клики по фону для автозакрытия экрана успеха */
   }
-  
-  /* БАЗОВЫЙ СТИЛЬ ПЛАШКИ ДЛЯ КОМПЬЮТЕРОВ (По центру) */
   .custom-popup-box {
+    position: fixed !important; top: 50% !important; left: 50% !important;
+    transform: translate(-50%, -50%) !important;
     background: #FFF5F5 !important; color: #4A2C22 !important;
-    padding: 35px 30px 25px 30px; border-radius: 16px; 
-    width: 420px !important; max-width: 90% !important;
+    padding: 35px 25px 25px 25px; border-radius: 16px; width: 380px; max-width: 88%;
     box-shadow: 0 12px 40px rgba(143, 33, 0, 0.25); text-align: center;
     font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-    box-sizing: border-box !important; border: 1px solid rgba(143, 33, 0, 0.1); 
-    pointer-events: auto; position: relative !important;
+    box-sizing: border-box; border: 1px solid rgba(143, 33, 0, 0.1); pointer-events: auto;
   }
-
-  /* СВЕРХЖЕСТКОЕ ЛЕКАРСТВО ДЛЯ МОБИЛЬНЫХ ТЕЛЕФОНОВ ANDROID И IPHONE */
-  @media screen and (max-width: 768px), screen and (max-device-width: 768px) {
-    /* Перестраиваем фон-контейнер: прижимаем плашку наверх и ЖЕСТКО к левому краю */
-    #custom-beta-overlay, #custom-feedback-overlay {
-      align-items: flex-start !important; 
-      justify-content: flex-start !important;
-      /* Создаем идеальные симметричные рамки слева и справа по 15 пикселей от краев стекла */
-      padding: 30px 15px 30px 15px !important; 
-    }
-    
-    .custom-popup-box {
-      /* Полностью убираем любые координаты и сдвиги, которые Android ломал при вызове клавиатуры */
-      top: 0 !important; left: 0 !important; transform: none !important;
-      
-      /* Жестко заставляем плашку занять ВСЮ доступную ширину внутри наших рамок */
-      width: 100% !important; 
-      max-width: 100% !important;
-      
-      padding: 50px 20px 35px 20px !important;
-      border-radius: 16px !important;
-    }
-  }
-
   .custom-popup-box input, .custom-popup-box textarea {
     width: 100% !important; padding: 12px !important; border: 1px solid rgba(143,33,0,0.2) !important;
     border-radius: 8px !important; margin-bottom: 15px !important; box-sizing: border-box !important;
