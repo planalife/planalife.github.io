@@ -7,10 +7,10 @@ langStyles.innerHTML = `
   #custom-lang-btn {
     position: fixed !important; top: 20px !important; right: 20px !important; z-index: 999999 !important;
     /* Высота увеличена в 2 раза (с 10px до 20px), ширина в 1.5 раза (с 16px до 24px) */
-    padding: 20px 24px !important; 
+    padding: 20px 28px !important; 
     border-radius: 32px !important; background: #ffffff !important; color: #000000 !important;
     /* Крупный, четкий шрифт */
-    font-family: -apple-system, BlinkMacSystemFont, sans-serif !important; font-size: 18px !important; font-weight: 600 !important;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif !important; font-size: 18px !important; font-weight: 660 !important;
     box-shadow: 0 6px 24px rgba(0,0,0,0.15) !important; cursor: pointer !important; border: 1px solid rgba(0,0,0,0.08) !important;
     transition: transform 0.1s ease;
   }
@@ -20,7 +20,7 @@ langStyles.innerHTML = `
     display: none; position: fixed !important; top: 90px !important; right: 20px !important; z-index: 999999 !important;
     background: #ffffff !important; border-radius: 16px !important; padding: 12px !important; 
     /* Ширина меню увеличена почти в 2 раза (с 170px до 280px) */
-    width: 280px !important; 
+    width: 300px !important; 
     box-shadow: 0 8px 30px rgba(0,0,0,0.18) !important; border: 1px solid rgba(0,0,0,0.08) !important;
     font-family: -apple-system, BlinkMacSystemFont, sans-serif !important;
     transition: opacity 0.2s ease; opacity: 0;
@@ -32,7 +32,7 @@ langStyles.innerHTML = `
     /* Просторные отступы внутри строк меню */
     padding: 16px 12px !important; 
     border: none !important; background: none !important; text-align: left !important;
-    font-size: 18px !important; font-weight: 500 !important; cursor: pointer !important; border-radius: 8px !important; color: #000 !important;
+    font-size: 22px !important; font-weight: 500 !important; cursor: pointer !important; border-radius: 8px !important; color: #000 !important;
     text-decoration: none !important; box-sizing: border-box !important;
     margin-bottom: 4px !important;
   }
