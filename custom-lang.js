@@ -1,28 +1,46 @@
 // ========================================================
 // 1. ВАШИ РОДНЫЕ СТИЛИ КНОПКИ И МЕНЮ (ИЗ БЛОКНОТА)
+// ========================================================
+// 1. УВЕЛИЧЕННЫЕ СТИЛИ КНОПКИ И МЕНЮ (В 2 РАЗА ПО ВЫСОТЕ, В 1.5 ПО ШИРИНЕ)
 const langStyles = document.createElement('style');
 langStyles.innerHTML = `
   #custom-lang-btn {
     position: fixed !important; top: 20px !important; right: 20px !important; z-index: 999999 !important;
-    padding: 10px 16px !important; border-radius: 24px !important; background: #ffffff !important; color: #000000 !important;
-    font-family: -apple-system, BlinkMacSystemFont, sans-serif !important; font-size: 14px !important; font-weight: 600 !important;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.12) !important; cursor: pointer !important; border: 1px solid rgba(0,0,0,0.08) !important;
+    /* Высота увеличена в 2 раза (с 10px до 20px), ширина в 1.5 раза (с 16px до 24px) */
+    padding: 20px 24px !important; 
+    border-radius: 32px !important; background: #ffffff !important; color: #000000 !important;
+    /* Крупный, четкий шрифт */
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif !important; font-size: 18px !important; font-weight: 600 !important;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.15) !important; cursor: pointer !important; border: 1px solid rgba(0,0,0,0.08) !important;
+    transition: transform 0.1s ease;
   }
+  #custom-lang-btn:active { transform: scale(0.97); }
+
   #custom-lang-dropdown {
-    display: none; position: fixed !important; top: 70px !important; right: 20px !important; z-index: 999999 !important;
-    background: #ffffff !important; border-radius: 12px !important; padding: 8px !important; width: 170px !important;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important; border: 1px solid rgba(0,0,0,0.08) !important;
+    display: none; position: fixed !important; top: 90px !important; right: 20px !important; z-index: 999999 !important;
+    background: #ffffff !important; border-radius: 16px !important; padding: 12px !important; 
+    /* Ширина меню увеличена почти в 2 раза (с 170px до 280px) */
+    width: 280px !important; 
+    box-shadow: 0 8px 30px rgba(0,0,0,0.18) !important; border: 1px solid rgba(0,0,0,0.08) !important;
     font-family: -apple-system, BlinkMacSystemFont, sans-serif !important;
     transition: opacity 0.2s ease; opacity: 0;
   }
+  
+  /* Увеличенные строки выбора языков внутри меню */
   #custom-lang-dropdown a, #custom-lang-dropdown button {
-    display: block !important; width: 100% !important; padding: 10px !important; border: none !important; background: none !important; text-align: left !important;
-    font-size: 14px !important; font-weight: 500 !important; cursor: pointer !important; border-radius: 6px !important; color: #000 !important;
+    display: block !important; width: 100% !important; 
+    /* Просторные отступы внутри строк меню */
+    padding: 16px 12px !important; 
+    border: none !important; background: none !important; text-align: left !important;
+    font-size: 18px !important; font-weight: 500 !important; cursor: pointer !important; border-radius: 8px !important; color: #000 !important;
     text-decoration: none !important; box-sizing: border-box !important;
+    margin-bottom: 4px !important;
   }
+  #custom-lang-dropdown a:last-child { margin-bottom: 0 !important; }
   #custom-lang-dropdown a:hover, #custom-lang-dropdown button:hover { background: #f5f5f7 !important; }
 `;
 document.head.appendChild(langStyles);
+
 
 // ========================================================
 // 2. ВАШИ РОДНЫЕ ВИЗУАЛЬНЫЕ ЭЛЕМЕНТЫ (ИЗ БЛОКНОТА)
