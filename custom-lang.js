@@ -8,7 +8,7 @@ langStyles.innerHTML = `
     position: fixed !important; top: 20px !important; right: 20px !important; z-index: 999999 !important;
     /* Высота увеличена в 2 раза (с 10px до 20px), ширина в 1.5 раза (с 16px до 24px) */
     padding: 20px 28px !important; 
-    border-radius: 32px !important; background: #ffffff !important; color: #000000 !important;
+    border-radius: 32px !important; background: #ffffff !important; color: #1d19e6 !important;
     /* Крупный, четкий шрифт */
     font-family: -apple-system, BlinkMacSystemFont, sans-serif !important; font-size: 18px !important; font-weight: 660 !important;
     box-shadow: 0 6px 24px rgba(0,0,0,0.15) !important; cursor: pointer !important; border: 1px solid rgba(0,0,0,0.08) !important;
