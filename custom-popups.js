@@ -4,36 +4,43 @@ popupStyles.innerHTML = `
   #custom-beta-overlay, #custom-feedback-overlay {
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(5px); z-index: 9999999;
-    pointer-events: auto;
+    
+    /* НА ПК: Элементы будут выравниваться строго по центру экрана */
+    display: none; align-items: center; justify-content: center;
+    box-sizing: border-box !important;
   }
   
-  /* ИСПРАВЛЕННЫЙ СТИЛЬ ПЛАШКИ ДЛЯ ИДЕАЛЬНОГО ЦЕНТРИРОВАНИЯ НА ПК И СМАРТФОНАХ */
+  /* БАЗОВЫЙ СТИЛЬ ПЛАШКИ ДЛЯ КОМПЬЮТЕРОВ (По центру) */
   .custom-popup-box {
-    position: fixed !important; 
-    top: 50% !important; 
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important; /* Намертво держит центр на ПК */
     background: #FFF5F5 !important; color: #4A2C22 !important;
-    padding: 35px 25px 25px 25px; border-radius: 16px; 
-    width: 380px !important; 
-    max-width: 88% !important;
+    padding: 35px 30px 25px 30px; border-radius: 16px; 
+    width: 420px !important; max-width: 90% !important;
     box-shadow: 0 12px 40px rgba(143, 33, 0, 0.25); text-align: center;
     font-family: -apple-system, BlinkMacSystemFont, sans-serif;
     box-sizing: border-box !important; border: 1px solid rgba(143, 33, 0, 0.1); 
-    pointer-events: auto;
+    pointer-events: auto; position: relative !important;
   }
 
-  /* СПЕЦИАЛЬНОЕ СВЕРХЖЕСТКОЕ ЛЕКАРСТВО ДЛЯ МОБИЛЬНЫХ БРАУЗЕРОВ ANDROID И IPHONE */
-  /* Когда ширина экрана меньше 768px, мы выключаем капризные проценты и центрируем плашку через viewport-ширину */
+  /* СВЕРХЖЕСТКОЕ ЛЕКАРСТВО ДЛЯ МОБИЛЬНЫХ ТЕЛЕФОНОВ ANDROID И IPHONE */
   @media screen and (max-width: 768px), screen and (max-device-width: 768px) {
+    /* Перестраиваем фон-контейнер: прижимаем плашку наверх и ЖЕСТКО к левому краю */
+    #custom-beta-overlay, #custom-feedback-overlay {
+      align-items: flex-start !important; 
+      justify-content: flex-start !important;
+      /* Создаем идеальные симметричные рамки слева и справа по 15 пикселей от краев стекла */
+      padding: 30px 15px 30px 15px !important; 
+    }
+    
     .custom-popup-box {
-      top: 25% !important; /* Приподнимаем чуть выше центра, чтобы выезжающая клавиатура Android ничего не перекрывала */
-      left: 4vw !important; /* Жесткий микро-отступ слева от физического края стекла телефона */
-      transform: none !important; /* Отменяем translate, который на Android сбоит при вызове клавиатуры */
-      width: 92vw !important; /* Плашка займет ровно 92% от реального стекла телефона */
-      max-width: 92vw !important;
-      padding: 45px 20px 30px 20px !important;
-      margin: 0 auto !important;
+      /* Полностью убираем любые координаты и сдвиги, которые Android ломал при вызове клавиатуры */
+      top: 0 !important; left: 0 !important; transform: none !important;
+      
+      /* Жестко заставляем плашку занять ВСЮ доступную ширину внутри наших рамок */
+      width: 100% !important; 
+      max-width: 100% !important;
+      
+      padding: 50px 20px 35px 20px !important;
+      border-radius: 16px !important;
     }
   }
 
