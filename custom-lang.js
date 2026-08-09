@@ -54,9 +54,9 @@ const langDropdown = document.createElement('div');
 langDropdown.id = 'custom-lang-dropdown';
 langDropdown.innerHTML = `
   <a href="https://planalife.app/ru" onclick="toggleLangMenu()">Русский 🇷🇺</a>
+  <a href="https://planalife.app/heb" onclick="toggleLangMenu()">עברית 🇮🇱</a>
   <a href="https://translate.google.com/translate?sl=en&tl=es&u=https://planalife.app" onclick="toggleLangMenu()">Español 🇪🇸</a>
   <a href="https://translate.google.com/translate?sl=en&tl=de&u=https://planalife.app" onclick="toggleLangMenu()">Deutsch 🇩🇪</a>
-  <a href="https://translate.google.com/translate?sl=en&tl=he&u=https://planalife.app" onclick="toggleLangMenu()">עברית 🇮🇱</a>
   <a href="https://translate.google.com/translate?sl=en&tl=ja&u=https://planalife.app" onclick="toggleLangMenu()">日本語 🇯🇵</a>
   <a href="https://translate.google.com/translate?sl=en&tl=fr&u=https://planalife.app" onclick="toggleLangMenu()">Français 🇫🇷</a>
 `;
